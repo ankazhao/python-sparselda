@@ -19,3 +19,4 @@ https://github.com/fandywang/python-sparselda/issues
 4. I. Porteous, D. Newman, A. Ihler, A. Asuncion, P. Smyth, and M. Welling. Fast collapsed Gibbs sampling for latent Dirichlet allocation. In SIGKDD, 2008.
 5. Limin Yao , David Mimno , Andrew McCallum, Efficient methods for topic model inference on streaming document collections, In SIGKDD, 2009.
 6. Xing Wei, W. Bruce Croft, LDA-based document models for ad-hoc retrieval, Proceedings of the 29th annual international ACM SIGIR conference on Research and development in information retrieval, August 06-11, 2006.
+7. rickjin, LDA 数学八卦, Technical Note, 2013.

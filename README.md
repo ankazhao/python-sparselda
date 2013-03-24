@@ -10,6 +10,16 @@ https://github.com/fandywang/python-sparselda/issues
 
 ## Usage
 ================
+### 1. Install Google Protocol Buffers (protobuf)
+    wget https://protobuf.googlecode.com/files/protobuf-2.5.0.tar.bz2
+    tar -zxvf protobuf-2.5.0.tar.bz2
+    cd protobuf-2.5.0
+    ./configure
+    make
+    sudo make install
+    cd python
+    python ./setup.py build
+    sudo python ./setup.py instal
 
 ## References
 ================

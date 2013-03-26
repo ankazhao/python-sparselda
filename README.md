@@ -19,7 +19,14 @@ https://github.com/fandywang/python-sparselda/issues
     sudo make install
     cd python
     python ./setup.py build
-    sudo python ./setup.py instal
+    sudo python ./setup.py install
+    
+    cd python-sparselda/common
+    protoc -I=. --python_out=. lda.proto
+
+### 2. Training
+### 3. Inference
+### 4. Evaluation
 
 ## References
 ================

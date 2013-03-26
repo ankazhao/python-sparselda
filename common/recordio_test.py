@@ -1,0 +1,75 @@
+#!/usr/bin/env  python
+#coding=utf-8
+
+# Copyright(c) 2013 python-sparselda project.
+# Author: Lifeng Wang (ofandywang@gmail.com)
+
+import unittest
+from recordio import RecordWriter
+from recordio import RecordReader
+from lda_pb2 import WordTopicHistogram
+
+class RecordIOTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_read_and_write_normal(self):
+        fp = open('../testdata/recordio.dat', 'wb')
+        record_writer = RecordWriter(fp)
+        self.assertFalse(record_writer.write(111))
+        self.assertFalse(record_writer.write(111.89))
+        self.assertFalse(record_writer.write(True))
+        self.assertTrue(record_writer.write('111'))
+        self.assertTrue(record_writer.write('89'))
+        self.assertTrue(record_writer.write('apple'))
+        self.assertTrue(record_writer.write('ipad'))
+        fp.close()
+
+        fp = open('../testdata/recordio.dat', 'rb')
+        record_reader = RecordReader(fp)
+        self.assertEqual('111', record_reader.read())
+        self.assertEqual('89', record_reader.read())
+        self.assertEqual('apple', record_reader.read())
+        self.assertEqual('ipad', record_reader.read())
+        self.assertIsNone(record_reader.read())
+        fp.close()
+
+    def test_read_and_writer_pb(self):
+        fp = open('../testdata/recordio.dat', 'wb')
+        record_writer = RecordWriter(fp)
+        for i in range(0, 20):
+            word_topic_hist = WordTopicHistogram()
+            word_topic_hist.word = i
+            for j in range(0, 20):
+                non_zero = \
+                        word_topic_hist.sparse_topic_hist.non_zeros.add()
+                non_zero.topic = j
+                non_zero.count = j + 1
+            self.assertTrue(record_writer.write( \
+                    word_topic_hist.SerializeToString()))
+        fp.close()
+
+        fp = open('../testdata/recordio.dat', 'rb')
+        record_reader = RecordReader(fp)
+        i = 0
+        while True:
+            blob = record_reader.read()
+            if blob == None:
+                break
+            word_topic_hist = WordTopicHistogram()
+            word_topic_hist.ParseFromString(blob)
+            self.assertEqual(i, word_topic_hist.word)
+            sparse_topic_hist = word_topic_hist.sparse_topic_hist
+            self.assertEqual(20, len(sparse_topic_hist.non_zeros))
+            for j in range(0, len(sparse_topic_hist.non_zeros)):
+                self.assertEqual(j, sparse_topic_hist.non_zeros[j].topic)
+                self.assertEqual(j + 1, \
+                        sparse_topic_hist.non_zeros[j].count)
+            i += 1
+        self.assertEqual(20, i)
+        fp.close()
+
+if __name__ == '__main__':
+    unittest.main()
+

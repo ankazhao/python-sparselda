@@ -134,8 +134,8 @@ class SparseLDAGibbsSampler(object):
         doc_topic_bucket, doc_topic_sum = \
                 self._calc_doc_topic_bucket(doc, word)
 
-        dist_sum = self.smoothing_only_sum[word] + doc_topic_sum
-        sample = rand.uniform(0.0, dist_sum)
+        total_mass = self.smoothing_only_sum[word] + doc_topic_sum
+        sample = rand.uniform(0.0, total_mass)
 
         # sample in document topic bucket
         if sample < doc_topic_sum:

@@ -88,6 +88,7 @@ class SparseLDATrainGibbsSampler(object):
 
         rand = random.Random()
 
+        logging.info('Load corpus from %s.' % corpus_dir)
         for root, dirs, files in os.walk(corpus_dir):
             for f in files:
                 filename = os.path.join(root, f)
@@ -96,7 +97,6 @@ class SparseLDATrainGibbsSampler(object):
                     document = Document(self.model.num_topics)
                     document.parse_from_tokens(doc_str.split('\t'), rand, \
                             self.vocabulary)
-                    # print "doc: %s" % document
                     if document.num_words() > 1:
                         self.documents.append(document)
 
@@ -107,11 +107,10 @@ class SparseLDATrainGibbsSampler(object):
                             self.model.word_topic_hist[word.id].increase_topic( \
                                     word.topic, 1)
                             self.model.global_topic_hist.topic_counts[word.topic] += 1
-                            print "testtestestesteeeeeeeeeeeeeeeeeeeeeee"
 
                 fp.close()
 
-        print 'model: %s' % str(self.model)
+        logging.info('The document number is %d.' % len(self.documents))
         self._calculate_smoothing_only_bucket()
         self._initialize_topic_word_coefficient()
 

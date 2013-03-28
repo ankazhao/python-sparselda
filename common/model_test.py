@@ -16,9 +16,9 @@ class ModelTest(unittest.TestCase):
 
         # initialize self.model.global_topic_hist and
         # self.model.word_topic_hist
-        for i in range(0, 10):
+        for i in xrange(0, 10):
             ordered_sparse_topic_hist = OrderedSparseTopicHistogram(20)
-            for j in range(0, 10 + i):
+            for j in xrange(0, 10 + i):
                 ordered_sparse_topic_hist.increase_topic(j, j + 1)
                 self.model.global_topic_hist.topic_counts[j] += j + 1
             self.model.word_topic_hist[i] = ordered_sparse_topic_hist
@@ -41,7 +41,7 @@ class ModelTest(unittest.TestCase):
             self.assertEqual(new_sparse_topic_hist.size(), \
                     sparse_topic_hist.size())
 
-            for j in range(0, new_sparse_topic_hist.size()):
+            for j in xrange(0, new_sparse_topic_hist.size()):
                 self.assertEqual( \
                         new_sparse_topic_hist.sparse_topic_hist.non_zeros[j].topic, \
                         sparse_topic_hist.sparse_topic_hist.non_zeros[j].topic)

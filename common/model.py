@@ -33,7 +33,7 @@ class Model(object):
         self.num_topics = num_topics
 
         self.global_topic_hist = GlobalTopicHistogram()  # item fmt: N(z)
-        for i in range(0, self.num_topics):
+        for i in xrange(0, self.num_topics):
             self.global_topic_hist.topic_counts.append(i)
 
         self.word_topic_hist = {}  # item fmt: w -> N(w|z)
@@ -158,7 +158,7 @@ class Model(object):
         # TODO(fandywang): only cache submatrix p(w|z) of some frequency words.
         for word_id, ordered_sparse_topic_hist in self.word_topic_hist.items():
             dense_topic_dist = []
-            for topic in range(0, self.num_topics):
+            for topic in xrange(0, self.num_topics):
                 dense_topic_dist.append(self.hyper_params.word_prior / \
                         (self.hyper_params.word_prior * vocab_size + \
                         self.global_topic_hist.topic_counts[topic]))
@@ -178,7 +178,7 @@ class Model(object):
         model_str = []
         model_str.append('num_topics: %d' % self.num_topics)
         model_str.append('GlobalTopicHist: ')
-        for i in range(0, len(self.global_topic_hist.topic_counts)):
+        for i in xrange(0, len(self.global_topic_hist.topic_counts)):
             model_str.append('topic: %d\tcount: %d' \
                     % (i, self.global_topic_hist.topic_counts[i]))
         model_str.append('WordTopicHist: ')

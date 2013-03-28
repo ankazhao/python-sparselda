@@ -15,13 +15,13 @@ class OrderedSparseTopicHistogramTest(unittest.TestCase):
         self.num_topics = 20
         self.ordered_sparse_topic_hist = \
                 OrderedSparseTopicHistogram(self.num_topics)
-        for i in range(0, 10):
+        for i in xrange(0, 10):
             self.ordered_sparse_topic_hist.increase_topic(i, i + 1)
 
     def test_ordered_sparse_topic_hist(self):
         topic_hist = self.ordered_sparse_topic_hist.sparse_topic_hist
         self.assertEqual(10, len(topic_hist.non_zeros))
-        for i in range(0, len(topic_hist.non_zeros)):
+        for i in xrange(0, len(topic_hist.non_zeros)):
             self.assertEqual(10 - i - 1, topic_hist.non_zeros[i].topic)
             self.assertEqual(10 - i, topic_hist.non_zeros[i].count)
 
@@ -33,19 +33,19 @@ class OrderedSparseTopicHistogramTest(unittest.TestCase):
         self.assertEqual(10, self.ordered_sparse_topic_hist.size())
 
     def test_count(self):
-        for i in range(0, 10):
+        for i in xrange(0, 10):
             self.assertEqual(i + 1, \
                     self.ordered_sparse_topic_hist.count(i))
-        for i in range(10, 20):
+        for i in xrange(10, 20):
             self.assertEqual(0, \
                     self.ordered_sparse_topic_hist.count(i))
 
     def test_increase_topic(self):
-        for i in range(0, 20):
+        for i in xrange(0, 20):
             self.ordered_sparse_topic_hist.increase_topic(i, i + 1)
 
             topic_hist = self.ordered_sparse_topic_hist.sparse_topic_hist
-            for j in range(0, len(topic_hist.non_zeros) - 1):
+            for j in xrange(0, len(topic_hist.non_zeros) - 1):
                 self.assertGreaterEqual( \
                         topic_hist.non_zeros[j].count, \
                         topic_hist.non_zeros[j + 1].count)
@@ -65,14 +65,14 @@ class OrderedSparseTopicHistogramTest(unittest.TestCase):
         self.assertEqual(3, self.ordered_sparse_topic_hist.count(6))
 
         topic_hist = self.ordered_sparse_topic_hist.sparse_topic_hist
-        for i in range(0, len(topic_hist.non_zeros) - 1):
+        for i in xrange(0, len(topic_hist.non_zeros) - 1):
             self.assertGreaterEqual( \
                     topic_hist.non_zeros[i].count, \
                     topic_hist.non_zeros[i + 1].count)
 
         self.ordered_sparse_topic_hist.decrease_topic(6, 3)
         self.assertEqual(9, self.ordered_sparse_topic_hist.size())
-        for i in range(0, len(topic_hist.non_zeros) - 1):
+        for i in xrange(0, len(topic_hist.non_zeros) - 1):
             self.assertGreaterEqual( \
                     topic_hist.non_zeros[i].count, \
                     topic_hist.non_zeros[i + 1].count)

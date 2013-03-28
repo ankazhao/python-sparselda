@@ -33,7 +33,7 @@ class DocumentTest(unittest.TestCase):
 
         self.assertEqual(4, self.document.num_words())
         topic_hist = self.document.doc_topic_hist.sparse_topic_hist
-        for i in range(0, len(topic_hist.non_zeros) - 1):
+        for i in xrange(0, len(topic_hist.non_zeros) - 1):
             self.assertGreaterEqual(topic_hist.non_zeros[i].count, \
                     topic_hist.non_zeros[i + 1].count)
         logging.info(str(self.document))
@@ -43,7 +43,7 @@ class DocumentTest(unittest.TestCase):
                 self.vocabulary, self.model)
         self.assertEqual(2, self.document.num_words())
         topic_hist = self.document.doc_topic_hist.sparse_topic_hist
-        for i in range(0, len(topic_hist.non_zeros) - 1):
+        for i in xrange(0, len(topic_hist.non_zeros) - 1):
             self.assertGreaterEqual(topic_hist.non_zeros[i].count, \
                     topic_hist.non_zeros[i + 1].count)
         # print str(self.document)
@@ -65,13 +65,13 @@ class DocumentTest(unittest.TestCase):
         self.document.increase_topic(4, 5)
         self.document.increase_topic(9, 5)
         topic_hist = self.document.doc_topic_hist.sparse_topic_hist
-        for i in range(0, len(topic_hist.non_zeros) - 1):
+        for i in xrange(0, len(topic_hist.non_zeros) - 1):
             self.assertGreaterEqual(topic_hist.non_zeros[i].count, \
                     topic_hist.non_zeros[i + 1].count)
 
         self.document.decrease_topic(4, 4)
         self.document.decrease_topic(9, 3)
-        for i in range(0, len(topic_hist.non_zeros) - 1):
+        for i in xrange(0, len(topic_hist.non_zeros) - 1):
             self.assertGreaterEqual(topic_hist.non_zeros[i].count, \
                     topic_hist.non_zeros[i + 1].count)
 

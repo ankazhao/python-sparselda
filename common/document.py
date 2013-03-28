@@ -67,5 +67,5 @@ class Document(object):
     def __str__(self):
         """Outputs a human-readable representation of the model.
         """
-        return str(self.document_pb)
+        return str(self.document_pb) + str(self.doc_topic_hist)
 

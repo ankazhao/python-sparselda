@@ -38,10 +38,10 @@ class RecordIOTest(unittest.TestCase):
     def test_read_and_writer_pb(self):
         fp = open('../testdata/recordio.dat', 'wb')
         record_writer = RecordWriter(fp)
-        for i in range(0, 20):
+        for i in xrange(0, 20):
             word_topic_hist = WordTopicHistogram()
             word_topic_hist.word = i
-            for j in range(0, 20):
+            for j in xrange(0, 20):
                 non_zero = \
                         word_topic_hist.sparse_topic_hist.non_zeros.add()
                 non_zero.topic = j
@@ -62,7 +62,7 @@ class RecordIOTest(unittest.TestCase):
             self.assertEqual(i, word_topic_hist.word)
             sparse_topic_hist = word_topic_hist.sparse_topic_hist
             self.assertEqual(20, len(sparse_topic_hist.non_zeros))
-            for j in range(0, len(sparse_topic_hist.non_zeros)):
+            for j in xrange(0, len(sparse_topic_hist.non_zeros)):
                 self.assertEqual(j, sparse_topic_hist.non_zeros[j].topic)
                 self.assertEqual(j + 1, \
                         sparse_topic_hist.non_zeros[j].count)

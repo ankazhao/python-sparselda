@@ -33,7 +33,7 @@ class VocabularyTest(unittest.TestCase):
         self.assertEqual('macbook', self.vocabulary.word(2))
 
     def test_size(self):
-        self.assertEqual(12, self.vocabulary.size())
+        self.assertEqual(17, self.vocabulary.size())
 
 if __name__ == '__main__':
     unittest.main()

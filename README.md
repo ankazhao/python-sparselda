@@ -25,8 +25,28 @@ https://github.com/fandywang/python-sparselda/issues
     protoc -I=. --python_out=. lda.proto
 
 ### 2. Training
+Help:
+
+    python lda_trainer.py -h
+    
+Example:
+
+    python lda_trainer.py \
+    --corpus_dir=testdata/corpus/ \
+    --vocabulary_file=testdata/vocabulary.dat \
+    --num_topics=10 \
+    --topic_prior=0.1 \
+    --word_prior=0.01 \
+    --save_model_interval=100 \
+    --model_dir=testdata/sparselda_models \
+    --is_save_checkpoint=True \
+    --save_checkpoint_interval=10 \
+    --checkpoint_dir=testdata/sparselda_checkpoints
+    
 ### 3. Inference
 ### 4. Evaluation
+
+## TODO
 
 ## References
 ================

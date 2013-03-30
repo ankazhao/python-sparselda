@@ -13,6 +13,7 @@ from common.model import Model
 from common.vocabulary import Vocabulary
 from training.sparselda_train_gibbs_sampler import SparseLDATrainGibbsSampler
 from training.model_evaluator import ModelEvaluator
+from training.topic_words_stat import TopicWordsStat
 
 def main(args):
     model = Model(args.num_topics, args.topic_prior, args.word_prior)
@@ -33,7 +34,7 @@ def main(args):
             logging.info('iteration %d start saving lda model.' % (i + 1))
             sparselda_train_gibbs_sampler.save_model( \
                     args.model_dir, i + 1)
-            topic_words_stat = TopicWordsStat(mode, vocabulary)
+            topic_words_stat = TopicWordsStat(model, vocabulary)
             topic_words_stat.save( \
                     args.model_dir + '/topic_top_words.%d' % (i + 1),
                     args.topic_word_accumalated_prob_threshold)

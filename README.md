@@ -26,9 +26,11 @@ https://github.com/fandywang/python-sparselda/issues
 
 ### 2. Training
 Help:
+
     python lda_trainer.py -h
     
-Exapmle:
+Example:
+
     python lda_trainer.py \
     --corpus_dir=testdata/corpus/ \
     --vocabulary_file=testdata/vocabulary.dat \
@@ -40,6 +42,7 @@ Exapmle:
     --is_save_checkpoint=True \
     --save_checkpoint_interval=10 \
     --checkpoint_dir=testdata/sparselda_checkpoints
+    
 ### 3. Inference
 ### 4. Evaluation
 

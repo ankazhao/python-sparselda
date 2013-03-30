@@ -16,7 +16,7 @@ from common.model import Model
 from common.vocabulary import Vocabulary
 
 class ModelEvaluator(object):
-    """ModelQuality implements the evaluation method of lda model's quality.
+    """ModelEvaluator implements the evaluation method of lda model's quality.
     """
 
     def __init__(self, model, vocabulary):
@@ -27,17 +27,22 @@ class ModelEvaluator(object):
         self.word_topic_dist = \
                 self.model.get_word_topic_dist(self.vocabulary.size())
 
-    def calculate_loglikelihood(self, documents):
+    def compute_loglikelihood(self, documents):
         """Returns the loglikelihood of documents.
+
         p(D|M) = p(d1)p(d2)...
+
         p(d) = p(w1)p(w2)...
              = sum_z {p(z|d)p(w1|z)} * sum_z {p(z|d)p(w2|z)} * ...
+
         log(p(d)) = log(sum_z p(z|d)p(w1|z)) + log(sum_z p(z|d)p(w2|z)) + ...
-        log(p(D|M)) = log(p(d1)) + log(p(d2)) + ...
+
+        p(D|M) -> log(p(D|M)) = log(p(d1)) + log(p(d2)) + ...
         """
         loglikelihood = 0.0
         for document in documents:
-            doc_dense_topic_dist = self._calculate_doc_topic_distribution(document)
+            doc_dense_topic_dist = \
+                    self._compute_doc_topic_distribution(document)
             doc_loglikelihood = 0.0
             for word in document.document_pb.words:
                 word_topic_dist = self.word_topic_dist[word.id]
@@ -47,7 +52,7 @@ class ModelEvaluator(object):
             loglikelihood += doc_loglikelihood
         return loglikelihood
 
-    def _calculate_doc_topic_distribution(self, document):
+    def _compute_doc_topic_distribution(self, document):
         topic_hist_sum = 0
         for non_zero in document.doc_topic_hist.sparse_topic_hist.non_zeros:
             topic_hist_sum += non_zero.count

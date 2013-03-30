@@ -57,6 +57,10 @@ class SparseLDATrainGibbsSampler(object):
     """
 
     def __init__(self, model, vocabulary):
+        logging.basicConfig(filename = os.path.join(os.getcwd(), \
+                'log.txt'), level = logging.DEBUG, filemode = 'a', \
+                format = '%(asctime)s - %(levelname)s: %(message)s')
+
         self.model = model
         self.vocabulary = vocabulary
         self.documents = []  # item fmt: common.lda_pb2.Document
@@ -92,21 +96,24 @@ class SparseLDATrainGibbsSampler(object):
         for root, dirs, files in os.walk(corpus_dir):
             for f in files:
                 filename = os.path.join(root, f)
+                logging.info('Load filename %s.' % filename)
                 fp = open(filename, 'r')
                 for doc_str in fp:
+                    doc_str = doc_str.decode('gbk')
                     document = Document(self.model.num_topics)
-                    document.parse_from_tokens(doc_str.split('\t'), rand, \
-                            self.vocabulary)
-                    if document.num_words() > 1:
-                        self.documents.append(document)
+                    document.parse_from_tokens(doc_str.strip().split('\t'), \
+                            rand, self.vocabulary)
+                    if document.num_words() < 2:
+                        continue
+                    self.documents.append(document)
 
-                        for word in document.document_pb.words:
-                            if word.id not in self.model.word_topic_hist:
-                                self.model.word_topic_hist[word.id] = \
-                                        OrderedSparseTopicHistogram(self.model.num_topics)
-                            self.model.word_topic_hist[word.id].increase_topic( \
-                                    word.topic, 1)
-                            self.model.global_topic_hist.topic_counts[word.topic] += 1
+                    for word in document.document_pb.words:
+                        if word.id not in self.model.word_topic_hist:
+                            self.model.word_topic_hist[word.id] = \
+                                    OrderedSparseTopicHistogram(self.model.num_topics)
+                        self.model.word_topic_hist[word.id].increase_topic( \
+                                  word.topic, 1)
+                        self.model.global_topic_hist.topic_counts[word.topic] += 1
 
                 fp.close()
 
@@ -114,10 +121,12 @@ class SparseLDATrainGibbsSampler(object):
         self._calculate_smoothing_only_bucket()
         self._initialize_topic_word_coefficient()
 
-    def save_model(self, model_dir):
+    def save_model(self, model_dir, iteration = ''):
         """Save lda model to model_dir.
         """
-        self.model.save(model_dir)
+        if not os.path.exists(model_dir):
+            os.mkdir(model_dir)
+        self.model.save(model_dir + '/' + str(iteration))
 
     def save_checkpoint(self, checkpoint_dir, iteration):
         """Dump the corpus and current model as checkpoint.
@@ -160,7 +169,7 @@ class SparseLDATrainGibbsSampler(object):
             logging.warning('The checkpoint directory %s does not exists.' \
                     % checkpoint_dir)
             return None
-        checkpoint_dir += str(max_iteration)
+        checkpoint_dir += '/' + str(max_iteration)
         logging.info('Load checkpoint from %s.' % checkpoint_dir)
 
         assert self._load_corpus(checkpoint_dir + '/corpus')
@@ -203,7 +212,6 @@ class SparseLDATrainGibbsSampler(object):
         for document in self.documents:
             self._calculate_doc_topic_bucket(document)
             self._update_topic_word_coefficient(document)
-            print 'document old: ' + str(document)
             for i in xrange(len(document.document_pb.words)):
                 word = document.document_pb.words[i]
                 self._remove_word_topic(document, word)
@@ -211,7 +219,6 @@ class SparseLDATrainGibbsSampler(object):
                 new_topic = self._sample_new_topic(document, word, rand)
                 word.topic = new_topic
                 self._add_word_topic(document, word)
-            print 'document new: ' + str(document)
             self._reset_topic_word_coefficient(document)
 
     def _calculate_smoothing_only_bucket(self):

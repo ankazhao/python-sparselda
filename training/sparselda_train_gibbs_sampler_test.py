@@ -34,7 +34,8 @@ class SparseLDATrainGibbsSamplerTest(unittest.TestCase):
             if (i + 1) % 10 == 0:
                 self.sparselda_train_gibbs_sampler.save_checkpoint( \
                         '../testdata/checkpoint', i + 1)
-        self.sparselda_train_gibbs_sampler.save_model('../testdata/train_model')
+        self.sparselda_train_gibbs_sampler.save_model( \
+                '../testdata/train_model', 100)
 
     def test_load_checkpoint(self):
         cur_iteration = self.sparselda_train_gibbs_sampler.load_checkpoint( \

@@ -17,6 +17,7 @@ class Vocabulary(object):
         """
         fp = open(filename, 'r')
         for line in fp:
+            line = line.decode('gbk')
             fields = line.strip().split('\t')
             if len(fields) > 0 and fields[0] not in self.word_map:
                 self.word_map[fields[0]] = len(self.words)

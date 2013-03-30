@@ -46,6 +46,8 @@ Example:
 ### 3. Inference
 ### 4. Evaluation
 
+## TODO
+
 ## References
 ================
 1. D. Blei, A. Ng, and M. Jordan. Latent Dirichlet allocation. Journal of Machine Learning Research, 2003.

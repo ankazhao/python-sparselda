@@ -66,6 +66,7 @@ https://github.com/fandywang/python-sparselda/issues
 2. Infer topic top words distribution.
 3. Implements the C++ version.
 4. Parallelization or Multi-threading.
+
 ## References
 ================
 1. D. Blei, A. Ng, and M. Jordan. Latent Dirichlet allocation. Journal of Machine Learning Research, 2003.

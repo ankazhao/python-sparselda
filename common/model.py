@@ -6,14 +6,46 @@
 
 import logging
 import os
-from lda_pb2 import SparseTopicHistogram
-from lda_pb2 import GlobalTopicHistogram
-from lda_pb2 import WordTopicHistogram
-from lda_pb2 import HyperParams
+
+from lda_pb2 import SparseTopicHistogramPB
+from lda_pb2 import GlobalTopicHistogramPB
+from lda_pb2 import WordTopicHistogramPB
+from lda_pb2 import HyperParamsPB
 from ordered_sparse_topic_histogram import OrderedSparseTopicHistogram
 from recordio import RecordReader
 from recordio import RecordWriter
 from vocabulary import Vocabulary
+
+class HyperParams(object):
+
+    # TODO(fandywang): optimize the hyper_params.
+    # Because we find that an asymmetric Dirichlet prior over the document-
+    # topic distributions has substantial advantages over a symmetric prior,
+    # while an asymmetric prior over topic-word distributions provides no
+    # real benefit.
+    #
+    # See 'Hanna Wallach, David Mimno, and Andrew McCallum. 2009.
+    # Rethinking LDA: Why priors matter. In Proceedings of NIPS-09,
+    # Vancouver, BC.' for more details.
+    def __init__(self, topic_prior = 0.01, word_prior = 0.1):
+        self.topic_prior = topic_prior
+        self.word_prior = word_prior
+
+    def serialize_to_string(self):
+        hyper_params_pb = HyperParamsPB()
+        hyper_params_pb.topic_prior = self.topic_prior
+        hyper_params_pb.word_prior = self.word_prior
+        return hyper_params_pb.SerializeToString()
+
+    def parse_from_string(self, hyper_params_str):
+        hyper_params_pb = HyperParamsPB()
+        hyper_params_pb.ParseFromString(hyper_params_str)
+        self.topic_prior = hyper_params_pb.topic_prior
+        self.word_prior = hyper_params_pb.word_prior
+
+    def __str(self):
+        return '<topic_prior: ' + str(self.topic_prior) + \
+                ', word_prior: ' + str(self.word_prior) + '>'
 
 class Model(object):
     """Model implements the sparselda model.
@@ -32,20 +64,9 @@ class Model(object):
     def __init__(self, num_topics, topic_prior = 0.01, word_prior = 0.1):
         self.num_topics = num_topics
 
-        self.global_topic_hist = GlobalTopicHistogram()  # item fmt: N(z)
-        for i in xrange(0, self.num_topics):
-            self.global_topic_hist.topic_counts.append(i)
-
+        self.global_topic_hist = [0] * self.num_topics  # item fmt: N(z)
         self.word_topic_hist = {}  # item fmt: w -> N(w|z)
 
-        # TODO(fandywang): optimize the hyper_params.
-        # Because we find that an asymmetric Dirichlet prior over the document-
-        # topic distributions has substantial advantages over a symmetric prior,
-        # while an asymmetric prior over topic-word distributions provides no
-        # real benefit.
-        # See 'Hanna Wallach, David Mimno, and Andrew McCallum. 2009.
-        # Rethinking LDA: Why priors matter. In Proceedings of NIPS-09,
-        # Vancouver, BC.' for more details.
         self.hyper_params = HyperParams()
         self.hyper_params.topic_prior = topic_prior  # alpha, default symmetrical
         self.hyper_params.word_prior = word_prior  # beta, default symmetrical
@@ -66,7 +87,7 @@ class Model(object):
         logging.info('Load lda model from %s.' % model_dir)
         assert self._load_global_topic_hist(model_dir + "/" + \
                 self.__class__.GLOABLE_TOPIC_HIST_FILENAME)
-        self.num_topics = len(self.global_topic_hist.topic_counts)
+        self.num_topics = len(self.global_topic_hist)
         assert self._load_word_topic_hist(model_dir + "/" + \
                 self.__class__.WORD_TOPIC_HIST_FILENAME)
         assert self._load_hyper_params(model_dir + "/" + \
@@ -75,7 +96,10 @@ class Model(object):
     def _save_global_topic_hist(self, filename):
         fp = open(filename, 'wb')
         record_writer = RecordWriter(fp)
-        record_writer.write(self.global_topic_hist.SerializeToString())
+        global_topic_hist_pb = GlobalTopicHistogramPB()
+        for topic_count in self.global_topic_hist:
+            global_topic_hist_pb.topic_counts.append(topic_count)
+        record_writer.write(global_topic_hist_pb.SerializeToString())
         fp.close()
 
     def _save_word_topic_hist(self, filename):
@@ -83,22 +107,22 @@ class Model(object):
         record_writer = RecordWriter(fp)
         for word, ordered_sparse_topic_hist in \
                 self.word_topic_hist.items():
-            word_topic_hist_pb = WordTopicHistogram()
+            word_topic_hist_pb = WordTopicHistogramPB()
             word_topic_hist_pb.word = word
-            word_topic_hist_pb.sparse_topic_hist.CopyFrom( \
-                    ordered_sparse_topic_hist.sparse_topic_hist)
+            word_topic_hist_pb.sparse_topic_hist.ParseFromString( \
+                    ordered_sparse_topic_hist.serialize_to_string())
             record_writer.write(word_topic_hist_pb.SerializeToString())
         fp.close()
 
     def _save_hyper_params(self, filename):
         fp = open(filename, 'wb')
         record_writer = RecordWriter(fp)
-        record_writer.write(self.hyper_params.SerializeToString())
+        record_writer.write(self.hyper_params.serialize_to_string())
         fp.close()
 
     def _load_global_topic_hist(self, filename):
         logging.info('Loading global_topic_hist vector N(z).')
-        self.global_topic_hist.Clear()
+        self.global_topic_hist = []
 
         fp = open(filename, "rb")
         record_reader = RecordReader(fp)
@@ -108,7 +132,10 @@ class Model(object):
             logging.error('GlobalTopicHist is nil, file %s' % filename)
             return False
 
-        self.global_topic_hist.ParseFromString(blob)
+        global_topic_hist_pb = GlobalTopicHistogramPB()
+        global_topic_hist_pb.ParseFromString(blob)
+        for topic_count in global_topic_hist_pb.topic_counts:
+            self.global_topic_hist.append(topic_count)
         return True
 
     def _load_word_topic_hist(self, filename):
@@ -121,16 +148,16 @@ class Model(object):
             blob = record_reader.read()
             if blob == None:
                 break
-            word_topic_hist_pb = WordTopicHistogram()
+
+            word_topic_hist_pb = WordTopicHistogramPB()
             word_topic_hist_pb.ParseFromString(blob)
 
             ordered_sparse_topic_hist = \
                     OrderedSparseTopicHistogram(self.num_topics)
-            ordered_sparse_topic_hist.sparse_topic_hist.CopyFrom( \
-                    word_topic_hist_pb.sparse_topic_hist)
+            ordered_sparse_topic_hist.parse_from_string( \
+                    word_topic_hist_pb.sparse_topic_hist.SerializeToString())
             self.word_topic_hist[word_topic_hist_pb.word] = \
                     ordered_sparse_topic_hist
-
         fp.close()
         return (len(self.word_topic_hist) > 0)
 
@@ -144,7 +171,7 @@ class Model(object):
             logging.error('HyperParams is nil, file %s' % filename)
             return False
 
-        self.hyper_params.ParseFromString(blob)
+        self.hyper_params.parse_from_string(blob)
         return True
 
     def has_word(self, word):
@@ -155,19 +182,19 @@ class Model(object):
         """
         word_topic_dist = {}
 
-        # TODO(fandywang): only cache submatrix p(w|z) of some frequency words.
+        # TODO(fandywang): only cache sub-matrix p(w|z) of some frequency words.
         for word_id, ordered_sparse_topic_hist in self.word_topic_hist.items():
             dense_topic_dist = []
-            for topic in xrange(0, self.num_topics):
+            for topic in xrange(self.num_topics):
                 dense_topic_dist.append(self.hyper_params.word_prior / \
                         (self.hyper_params.word_prior * vocab_size + \
-                        self.global_topic_hist.topic_counts[topic]))
+                        self.global_topic_hist[topic]))
 
-            for non_zero in ordered_sparse_topic_hist.sparse_topic_hist.non_zeros:
+            for non_zero in ordered_sparse_topic_hist.non_zeros:
                 dense_topic_dist[non_zero.topic] = \
                         (self.hyper_params.word_prior + non_zero.count) / \
                         (self.hyper_params.word_prior * vocab_size + \
-                        self.global_topic_hist.topic_counts[topic])
+                        self.global_topic_hist[topic])
             word_topic_dist[word_id] = dense_topic_dist
 
         return word_topic_dist
@@ -177,10 +204,7 @@ class Model(object):
         """
         model_str = []
         model_str.append('num_topics: %d' % self.num_topics)
-        model_str.append('GlobalTopicHist: ')
-        for i in xrange(0, len(self.global_topic_hist.topic_counts)):
-            model_str.append('topic: %d\tcount: %d' \
-                    % (i, self.global_topic_hist.topic_counts[i]))
+        model_str.append('GlobalTopicHist: %s' % str(self.global_topic_hist))
         model_str.append('WordTopicHist: ')
         for word, ordered_sparse_topic_hist in self.word_topic_hist.items():
             model_str.append('word: %d' % word)
@@ -188,3 +212,4 @@ class Model(object):
         model_str.append('HyperParams: ')
         model_str.append(str(self.hyper_params))
         return '\n'.join(model_str)
+

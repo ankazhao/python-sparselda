@@ -16,11 +16,11 @@ class ModelTest(unittest.TestCase):
 
         # initialize self.model.global_topic_hist and
         # self.model.word_topic_hist
-        for i in xrange(0, 10):
+        for i in xrange(10):
             ordered_sparse_topic_hist = OrderedSparseTopicHistogram(20)
-            for j in xrange(0, 10 + i):
+            for j in xrange(10 + i):
                 ordered_sparse_topic_hist.increase_topic(j, j + 1)
-                self.model.global_topic_hist.topic_counts[j] += j + 1
+                self.model.global_topic_hist[j] += j + 1
             self.model.word_topic_hist[i] = ordered_sparse_topic_hist
 
     def test_save_and_load(self):
@@ -41,13 +41,13 @@ class ModelTest(unittest.TestCase):
             self.assertEqual(new_sparse_topic_hist.size(), \
                     sparse_topic_hist.size())
 
-            for j in xrange(0, new_sparse_topic_hist.size()):
+            for j in xrange(new_sparse_topic_hist.size()):
                 self.assertEqual( \
-                        new_sparse_topic_hist.sparse_topic_hist.non_zeros[j].topic, \
-                        sparse_topic_hist.sparse_topic_hist.non_zeros[j].topic)
+                        new_sparse_topic_hist.non_zeros[j].topic, \
+                        sparse_topic_hist.non_zeros[j].topic)
                 self.assertEqual( \
-                        new_sparse_topic_hist.sparse_topic_hist.non_zeros[j].count, \
-                        sparse_topic_hist.sparse_topic_hist.non_zeros[j].count)
+                        new_sparse_topic_hist.non_zeros[j].count, \
+                        sparse_topic_hist.non_zeros[j].count)
 
         self.assertEqual(new_model.hyper_params.topic_prior, \
                 self.model.hyper_params.topic_prior)

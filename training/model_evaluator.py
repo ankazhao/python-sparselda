@@ -28,7 +28,7 @@ class ModelEvaluator(object):
                 self.model.get_word_topic_dist(self.vocabulary.size())
 
     def compute_loglikelihood(self, documents):
-        """Returns the loglikelihood of documents.
+        """Compute and return the loglikelihood of documents.
 
         p(D|M) = p(d1)p(d2)...
 
@@ -44,7 +44,7 @@ class ModelEvaluator(object):
             doc_dense_topic_dist = \
                     self._compute_doc_topic_distribution(document)
             doc_loglikelihood = 0.0
-            for word in document.document_pb.words:
+            for word in document.words:
                 word_topic_dist = self.word_topic_dist[word.id]
                 for topic, prob in enumerate(word_topic_dist):
                     doc_loglikelihood += \
@@ -54,7 +54,7 @@ class ModelEvaluator(object):
 
     def _compute_doc_topic_distribution(self, document):
         topic_hist_sum = 0
-        for non_zero in document.doc_topic_hist.sparse_topic_hist.non_zeros:
+        for non_zero in document.doc_topic_hist.non_zeros:
             topic_hist_sum += non_zero.count
 
         dense_topic_dist = []

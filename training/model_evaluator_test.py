@@ -24,7 +24,7 @@ class ModelEvaluatorTest(unittest.TestCase):
 
         self.model_evaluator = ModelEvaluator(self.model, self.vocabulary)
 
-    def test_calculate_loglikelihood(self):
+    def test_compute_loglikelihood(self):
         doc_tokens = \
                 ['macbook', 'ipad',  # exist in vocabulary and model
                 'mac os x', 'chrome',  # only exist in vocabulary
@@ -33,8 +33,8 @@ class ModelEvaluatorTest(unittest.TestCase):
         rand = random.Random()
         document.parse_from_tokens(doc_tokens, rand, self.vocabulary, self.model)
         documents = [document, document]
-        self.assertEqual(-221.2510660861265, \
-                self.model_evaluator.calculate_loglikelihood(documents))
+        self.assertEqual(-93.27486268157833, \
+                self.model_evaluator.compute_loglikelihood(documents))
 
 if __name__ == '__main__':
     unittest.main()

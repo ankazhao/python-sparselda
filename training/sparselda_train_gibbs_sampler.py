@@ -66,30 +66,26 @@ class SparseLDATrainGibbsSampler(object):
         self.documents = []  # item fmt: common.lda_pb2.Document
 
         # s(z), smoothing only bucket, indexed by topic z.
-        self.smoothing_only_bucket = [0 for i in xrange(self.model.num_topics)]
+        self.smoothing_only_bucket = [0.0] * self.model.num_topics
         self.smoothing_only_sum = 0.0
 
         # r(z, d), document-topic bucket, indexed by topic z.
-        self.doc_topic_bucket = [0 for i in xrange(self.model.num_topics)]
+        self.doc_topic_bucket = [0.0] * self.model.num_topics
         self.doc_topic_sum = 0.0
 
         # q(z, w, d), topic-word bucket, indexed by topic z.
-        self.topic_word_bucket = [0 for i in xrange(self.model.num_topics)]
+        self.topic_word_bucket = [0.0] * self.model.num_topics
         self.topic_word_sum = 0.0
         # q_coefficient(z, d), indexed by topic z.
-        self.topic_word_coef = [0 for i in xrange(self.model.num_topics)]
+        self.topic_word_coef = [0.0] * self.model.num_topics
 
     def load_corpus(self, corpus_dir):
         """Load corpus from a given directory, then initialize the documents
         and model.
         Line format: token1 \t token2 \t token3 \t ... ...
         """
-        del self.documents[:]
-        self.model.global_topic_hist.Clear()
-        for topic in xrange(self.model.num_topics):
-            self.model.global_topic_hist.topic_counts.append(0)
-        self.model.word_topic_hist.clear()
-
+        self.documents = []
+        self.model = Model(self.model.num_topics)
         rand = random.Random()
 
         logging.info('Load corpus from %s.' % corpus_dir)
@@ -98,23 +94,25 @@ class SparseLDATrainGibbsSampler(object):
                 filename = os.path.join(root, f)
                 logging.info('Load filename %s.' % filename)
                 fp = open(filename, 'r')
-                for doc_str in fp:
+                for doc_str in fp.readlines():
                     doc_str = doc_str.decode('gbk')
+                    doc_tokens = doc_str.strip().split('\t')
+                    if len(doc_tokens) < 2:
+                        continue
                     document = Document(self.model.num_topics)
-                    document.parse_from_tokens(doc_str.strip().split('\t'), \
-                            rand, self.vocabulary)
+                    document.parse_from_tokens(doc_tokens, rand, \
+                            self.vocabulary)
                     if document.num_words() < 2:
                         continue
                     self.documents.append(document)
-
-                    for word in document.document_pb.words:
+                    for word in document.words:
                         if word.id not in self.model.word_topic_hist:
                             self.model.word_topic_hist[word.id] = \
-                                    OrderedSparseTopicHistogram(self.model.num_topics)
+                                    OrderedSparseTopicHistogram( \
+                                    self.model.num_topics)
                         self.model.word_topic_hist[word.id].increase_topic( \
                                   word.topic, 1)
-                        self.model.global_topic_hist.topic_counts[word.topic] += 1
-
+                        self.model.global_topic_hist[word.topic] += 1
                 fp.close()
 
         logging.info('The document number is %d.' % len(self.documents))
@@ -149,7 +147,7 @@ class SparseLDATrainGibbsSampler(object):
                 fp.close()
                 fp = open(corpus_dir + '/documents.%d' % c, 'wb')
                 record_writer = RecordWriter(fp)
-            record_writer.write(document.serialize_to())
+            record_writer.write(document.serialize_to_string())
             c += 1
         fp.close()
 
@@ -159,7 +157,6 @@ class SparseLDATrainGibbsSampler(object):
     def load_checkpoint(self, checkpoint_dir):
         """Load checkpoint form checkpoint_dir.
         """
-        sub_dirs = os.listdir(checkpoint_dir)
         max_iteration = -1
         for sub_dir in os.listdir(checkpoint_dir):
             iteration = int(sub_dir)
@@ -177,7 +174,7 @@ class SparseLDATrainGibbsSampler(object):
         return max_iteration
 
     def _load_corpus(self, corpus_dir):
-        del self.documents[:]
+        self.documents = []
         if not os.path.exists(corpus_dir):
             logging.error('The corpus directory %s does not exists.' \
                     % corpus_dir)
@@ -212,8 +209,7 @@ class SparseLDATrainGibbsSampler(object):
         for document in self.documents:
             self._calculate_doc_topic_bucket(document)
             self._update_topic_word_coefficient(document)
-            for i in xrange(len(document.document_pb.words)):
-                word = document.document_pb.words[i]
+            for word in document.words:
                 self._remove_word_topic(document, word)
                 self._calculate_topic_word_bucket(word)
                 new_topic = self._sample_new_topic(document, word, rand)
@@ -230,20 +226,20 @@ class SparseLDATrainGibbsSampler(object):
                     self.model.hyper_params.topic_prior * \
                     self.model.hyper_params.word_prior / \
                     (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist.topic_counts[topic])
+                    self.model.global_topic_hist[topic])
             self.smoothing_only_sum += self.smoothing_only_bucket[topic]
 
     def _calculate_doc_topic_bucket(self, document):
         """r(z, d) = N(z|d) * beta / (beta * |V| + N(z))
         """
         self.doc_topic_sum = 0.0
-        self.doc_topic_bucket = [0 for i in xrange(self.model.num_topics)]
-        for non_zero in document.doc_topic_hist.sparse_topic_hist.non_zeros:
+        self.doc_topic_bucket = [0] * self.model.num_topics
+        for non_zero in document.doc_topic_hist.non_zeros:
             self.doc_topic_bucket[non_zero.topic] = \
                     document.get_topic_count(non_zero.topic) * \
                     self.model.hyper_params.word_prior / \
                     (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist.topic_counts[non_zero.topic])
+                    self.model.global_topic_hist[non_zero.topic])
             self.doc_topic_sum += self.doc_topic_bucket[non_zero.topic]
 
     def _initialize_topic_word_coefficient(self):
@@ -253,25 +249,25 @@ class SparseLDATrainGibbsSampler(object):
             self.topic_word_coef[topic] = \
                     self.model.hyper_params.topic_prior / \
                     (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist.topic_counts[topic])
+                    self.model.global_topic_hist[topic])
 
     def _update_topic_word_coefficient(self, document):
         """q_coefficient(z, d) = (alpha(z) + N(z|d)) / (beta * |V| + N(z))
         """
-        for non_zero in document.doc_topic_hist.sparse_topic_hist.non_zeros:
+        for non_zero in document.doc_topic_hist.non_zeros:
             self.topic_word_coef[non_zero.topic] = \
                     (self.model.hyper_params.topic_prior + non_zero.count) / \
                     (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist.topic_counts[non_zero.topic])
+                    self.model.global_topic_hist[non_zero.topic])
 
     def _reset_topic_word_coefficient(self, document):
         """q_coefficient(z) = alpha(z) / (beta * |V| + N(z)),
         """
-        for non_zero in document.doc_topic_hist.sparse_topic_hist.non_zeros:
+        for non_zero in document.doc_topic_hist.non_zeros:
             self.topic_word_coef[non_zero.topic] = \
                     self.model.hyper_params.topic_prior / \
                     (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist.topic_counts[non_zero.topic])
+                    self.model.global_topic_hist[non_zero.topic])
 
     def _calculate_topic_word_bucket(self, word):
         """q(z, w, d) = N(w|z) * (alpha(z) + N(z|d)) / (beta * |V| + N(z))
@@ -279,13 +275,13 @@ class SparseLDATrainGibbsSampler(object):
         """
         self.topic_word_sum = 0.0
         ordered_sparse_topic_hist = self.model.word_topic_hist[word.id]
-        for non_zero in ordered_sparse_topic_hist.sparse_topic_hist.non_zeros:
+        for non_zero in ordered_sparse_topic_hist.non_zeros:
             self.topic_word_bucket[non_zero.topic] = \
                     non_zero.count * self.topic_word_coef[non_zero.topic]
             self.topic_word_sum += self.topic_word_bucket[non_zero.topic]
 
     def _remove_word_topic(self, document, word):
-        self.model.global_topic_hist.topic_counts[word.topic] -= 1
+        self.model.global_topic_hist[word.topic] -= 1
         self.model.word_topic_hist[word.id].decrease_topic(word.topic, 1)
 
         self.smoothing_only_sum -= self.smoothing_only_bucket[word.topic]
@@ -296,24 +292,24 @@ class SparseLDATrainGibbsSampler(object):
                 self.model.hyper_params.topic_prior * \
                 self.model.hyper_params.word_prior / \
                 (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist.topic_counts[word.topic])
+                self.model.global_topic_hist[word.topic])
         self.smoothing_only_sum += self.smoothing_only_bucket[word.topic]
 
         self.doc_topic_bucket[word.topic] = \
                 document.get_topic_count(word.topic) * \
                 self.model.hyper_params.word_prior / \
                 (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist.topic_counts[word.topic])
+                self.model.global_topic_hist[word.topic])
         self.doc_topic_sum += self.doc_topic_bucket[word.topic]
 
         self.topic_word_coef[word.topic] = \
                 (self.model.hyper_params.topic_prior + \
                 document.get_topic_count(word.topic)) / \
                 (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist.topic_counts[word.topic])
+                self.model.global_topic_hist[word.topic])
 
     def _add_word_topic(self, document, word):
-        self.model.global_topic_hist.topic_counts[word.topic] += 1
+        self.model.global_topic_hist[word.topic] += 1
         self.model.word_topic_hist[word.id].increase_topic(word.topic, 1)
 
         self.smoothing_only_sum -= self.smoothing_only_bucket[word.topic]
@@ -324,21 +320,21 @@ class SparseLDATrainGibbsSampler(object):
                 self.model.hyper_params.topic_prior * \
                 self.model.hyper_params.word_prior / \
                 (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist.topic_counts[word.topic])
+                self.model.global_topic_hist[word.topic])
         self.smoothing_only_sum += self.smoothing_only_bucket[word.topic]
 
         self.doc_topic_bucket[word.topic] = \
                 document.get_topic_count(word.topic) * \
                 self.model.hyper_params.word_prior / \
                 (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist.topic_counts[word.topic])
+                self.model.global_topic_hist[word.topic])
         self.doc_topic_sum += self.doc_topic_bucket[word.topic]
 
         self.topic_word_coef[word.topic] = \
                 (self.model.hyper_params.topic_prior + \
                 document.get_topic_count(word.topic)) / \
                 (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist.topic_counts[word.topic])
+                self.model.global_topic_hist[word.topic])
 
     def _sample_new_topic(self, document, word, rand):
         """Sampling a new topic for current word.
@@ -353,7 +349,7 @@ class SparseLDATrainGibbsSampler(object):
         # self.topic_word_sum >> self.doc_topic_sum
         if sample < self.topic_word_sum:
             ordered_sparse_topic_hist = self.model.word_topic_hist[word.id]
-            for non_zero in ordered_sparse_topic_hist.sparse_topic_hist.non_zeros:
+            for non_zero in ordered_sparse_topic_hist.non_zeros:
                 sample -= self.topic_word_bucket[non_zero.topic]
                 if sample <= 0:
                     return non_zero.topic
@@ -361,7 +357,7 @@ class SparseLDATrainGibbsSampler(object):
             sample -= self.topic_word_sum
             # self.doc_topic_bucket is sparse.
             if sample < self.doc_topic_sum:
-                for non_zero in document.doc_topic_hist.sparse_topic_hist.non_zeros:
+                for non_zero in document.doc_topic_hist.non_zeros:
                     sample -= self.doc_topic_bucket[non_zero.topic]
                     if sample <= 0:
                         return non_zero.topic

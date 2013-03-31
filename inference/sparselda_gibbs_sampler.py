@@ -14,7 +14,7 @@ from common.model import Model
 from common.vocabulary import Vocabulary
 
 class SparseLDAGibbsSampler(object):
-    """SparseLDAGibbsSampler implements SparseLDA gibbs sampling inference
+    """SparseLDAGibbsSampler implements the SparseLDA gibbs sampling inference
     algorithm.  In gibbs sampling formula:
 
         (0) p(z|w) --> p(z|d) * p(w|z) --> [alpha(z) + N(z|d)] * p(w|z)
@@ -105,7 +105,7 @@ class SparseLDAGibbsSampler(object):
         accumulated_topic_hist = {}
         for i in xrange(self.total_iterations):
             # one iteration
-            for word in document.document_pb.words:
+            for word in document.words:
                 # --
                 document.decrease_topic(word.topic, 1)
 
@@ -116,8 +116,7 @@ class SparseLDAGibbsSampler(object):
                 document.increase_topic(new_topic, 1)
 
             if i >= self.burn_in_iterations:
-                for non_zero in \
-                        document.doc_topic_hist.sparse_topic_hist.non_zeros:
+                for non_zero in document.doc_topic_hist.non_zeros:
                     if non_zero.topic in accumulated_topic_hist:
                         accumulated_topic_hist[non_zero.topic] += non_zero.count
                     else:
@@ -163,7 +162,7 @@ class SparseLDAGibbsSampler(object):
         doc_topic_sum = 0.0
 
         dense_topic_dist = self.word_topic_dist[word]
-        for non_zero in doc.doc_topic_hist.sparse_topic_hist.non_zeros:
+        for non_zero in doc.doc_topic_hist.non_zeros:
             doc_topic_bucket.append([non_zero.topic, \
                     non_zero.count * dense_topic_dist[non_zero.topic]])
             doc_topic_sum += doc_topic_bucket[-1][1]

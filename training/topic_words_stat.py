@@ -35,7 +35,7 @@ class TopicWordsStat(object):
             top_words = []
             top_words.append(str(topic))
             top_words.append( \
-                    str(self.model.global_topic_hist.topic_counts[topic]))
+                    str(self.model.global_topic_hist[topic]))
             accumulated_prob = 0.0
             for word_prob in word_probs:
                 top_words.append(self.vocabulary.word(word_prob[0]))
@@ -51,17 +51,17 @@ class TopicWordsStat(object):
         """Compute the topic word distribution p(w|z), indexed by topic z.
         """
         # item fmt: z -> <w, p(w|z)>
-        sparse_topic_word_dist = [[] for i in xrange(self.model.num_topics)]
+        sparse_topic_word_dist = [[]] * self.model.num_topics
 
         for word_id, ordered_sparse_topic_hist in \
                 self.model.word_topic_hist.items():
             for non_zero in \
-                    ordered_sparse_topic_hist.sparse_topic_hist.non_zeros:
+                    ordered_sparse_topic_hist.non_zeros:
                 sparse_topic_word_dist[non_zero.topic].append( \
                         [word_id, \
                         (non_zero.count + self.model.hyper_params.word_prior) / \
                         (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                        self.model.global_topic_hist.topic_counts[non_zero.topic])])
+                        self.model.global_topic_hist[non_zero.topic])])
 
         for topic, word_probs in enumerate(sparse_topic_word_dist):
             sorted(word_probs, cmp=lambda x,y:cmp(x[1], y[1]), reverse=True)

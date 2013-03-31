@@ -1,4 +1,4 @@
-#!/usr/bin/env  python
+#!/usr/bin/env python
 #coding=utf-8
 
 # Copyright(c) 2013 python-sparselda project.
@@ -7,7 +7,7 @@
 import unittest
 from recordio import RecordWriter
 from recordio import RecordReader
-from lda_pb2 import WordTopicHistogram
+from lda_pb2 import WordTopicHistogramPB
 
 class RecordIOTest(unittest.TestCase):
 
@@ -38,10 +38,10 @@ class RecordIOTest(unittest.TestCase):
     def test_read_and_writer_pb(self):
         fp = open('../testdata/recordio.dat', 'wb')
         record_writer = RecordWriter(fp)
-        for i in xrange(0, 20):
-            word_topic_hist = WordTopicHistogram()
+        for i in xrange(20):
+            word_topic_hist = WordTopicHistogramPB()
             word_topic_hist.word = i
-            for j in xrange(0, 20):
+            for j in xrange(20):
                 non_zero = \
                         word_topic_hist.sparse_topic_hist.non_zeros.add()
                 non_zero.topic = j
@@ -57,12 +57,12 @@ class RecordIOTest(unittest.TestCase):
             blob = record_reader.read()
             if blob == None:
                 break
-            word_topic_hist = WordTopicHistogram()
+            word_topic_hist = WordTopicHistogramPB()
             word_topic_hist.ParseFromString(blob)
             self.assertEqual(i, word_topic_hist.word)
             sparse_topic_hist = word_topic_hist.sparse_topic_hist
             self.assertEqual(20, len(sparse_topic_hist.non_zeros))
-            for j in xrange(0, len(sparse_topic_hist.non_zeros)):
+            for j in xrange(len(sparse_topic_hist.non_zeros)):
                 self.assertEqual(j, sparse_topic_hist.non_zeros[j].topic)
                 self.assertEqual(j + 1, \
                         sparse_topic_hist.non_zeros[j].count)

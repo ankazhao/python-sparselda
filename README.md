@@ -25,16 +25,12 @@ https://github.com/fandywang/python-sparselda/issues
     protoc -I=. --python_out=. lda.proto
 
 ### 2. Training
-    usage: lda_trainer.py [-h] --corpus_dir CORPUS_DIR --vocabulary_file
-                      VOCABULARY_FILE --num_topics NUM_TOPICS
-                      [--topic_prior TOPIC_PRIOR] [--word_prior WORD_PRIOR]
-                      [--total_iterations TOTAL_ITERATIONS] --model_dir
-                      MODEL_DIR [--save_model_interval SAVE_MODEL_INTERVAL]
+    usage: lda_trainer.py [-h] --corpus_dir CORPUS_DIR --vocabulary_file VOCABULARY_FILE --num_topics NUM_TOPICS
+                      [--topic_prior TOPIC_PRIOR] [--word_prior WORD_PRIOR] [--total_iterations TOTAL_ITERATIONS] 
+                      --model_dir MODEL_DIR [--save_model_interval SAVE_MODEL_INTERVAL]
                       [--topic_word_accumalated_prob_threshold TOPIC_WORD_ACCUMALATED_PROB_THRESHOLD]
-                      [--is_save_checkpoint]
-                      [--save_checkpoint_interval SAVE_CHECKPOINT_INTERVAL]
-                      [--checkpoint_dir CHECKPOINT_DIR]
-                      [--compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL]
+                      [--is_save_checkpoint] [--save_checkpoint_interval SAVE_CHECKPOINT_INTERVAL]
+                      [--checkpoint_dir CHECKPOINT_DIR] [--compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -62,13 +58,16 @@ https://github.com/fandywang/python-sparselda/issues
       --checkpoint_dir CHECKPOINT_DIR
                             the checkpoint directory.
       --compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL
-                            the interval of compute_loglikelihood action.
-    
+                            the interval of compute_loglikelihood action.    
 ### 3. Inference
 ### 4. Evaluation
 
 ## TODO
-
+================
+1. Optimize hyperparameters.
+2. Infer topic top words distribution.
+3. Implements the C++ version.
+4. Parallelization or Multi-threading.
 ## References
 ================
 1. D. Blei, A. Ng, and M. Jordan. Latent Dirichlet allocation. Journal of Machine Learning Research, 2003.

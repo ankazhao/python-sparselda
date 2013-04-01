@@ -1,6 +1,8 @@
 ## python-sparselda
 ================
-python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and written in Python 2.6 or newer, Python 3.0 or newer excluded. Frankly, python-sparselda is just a mini project, we hope it can help you better understand the standard LDA and SparseLDA algorithm. RTFSC for more details. Have fun.
+python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and written in Python 2.6 or newer, Python 3.0 or newer excluded.
+
+Frankly, python-sparselda is just a mini project, we hope it can help you better understand the standard LDA and SparseLDA algorithm. RTFSC for more details. Have fun.
 
 Please use the github issue tracker for python-sparselda at:
 https://github.com/fandywang/python-sparselda/issues

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 nohup python lda_trainer.py \
-    --corpus_dir=../../wenwen_title_800w/corpus_test \
-    --vocabulary_file=../../wenwen_title_800w/vocab.txt \
+    --corpus_dir=testdata/corpus \
+    --vocabulary_file=testdata/vocabulary.dat \
     --num_topics=100 \
     --topic_prior=0.1 \
     --word_prior=0.01 \

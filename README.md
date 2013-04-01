@@ -11,7 +11,7 @@ https://github.com/fandywang/python-sparselda/issues
 ================
 ### 1. Install Google Protocol Buffers
 python-sparselda serialize and persistent store the lda model and checkpoint based on protobuf, so you should install it first.
-    
+
     wget https://protobuf.googlecode.com/files/protobuf-2.5.0.tar.bz2
     tar -zxvf protobuf-2.5.0.tar.bz2
     cd protobuf-2.5.0
@@ -45,17 +45,17 @@ python-sparselda serialize and persistent store the lda model and checkpoint bas
     --model_dir=MODEL_DIR
             the model directory.
     --save_model_interval=SAVE_MODEL_INTERVAL
-            the interval of save_model action.
+            the interval to save lda model.
     --topic_word_accumulated_prob_threshold=TOPIC_WORD_ACCUMULATED_PROB_THRESHOLD
-            the accumulated_prob_threshold of topic words.
+            the accumulated_prob_threshold of topic top words.
     --save_checkpoint_interval=SAVE_CHECKPOINT_INTERVAL
-            the interval of save checkpoint action.
+            the interval to save checkpoint.
     --checkpoint_dir=CHECKPOINT_DIR
             the checkpoint directory.
     --compute_loglikelihood_interval=COMPUTE_LOGLIKELIHOOD_INTERVAL
-            the interval of compute_loglikelihood action.
+            the interval to compute loglikelihood.
 ### 3. Inference
-Pls refer example code: lda_inferencer.py. Note that we strongly recommend you to use MultiChainGibbsSampler class. 
+Pls refer example code: lda_inferencer.py. Note that we strongly recommend you to use MultiChainGibbsSampler class.
 
 ### 4. Evaluation
 Instead of manual evaluation, we want to evaluate topics quality automatically, and filter out a few meaningless topics to enchance the inference effect.

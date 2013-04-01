@@ -76,14 +76,14 @@ if __name__ == '__main__':
             help='the total iteration.')
     parser.add_option('--model_dir', help='the model directory.')
     parser.add_option('--save_model_interval', type=int, default=100, \
-            help='the interval of save_model action.')
+            help='the interval to save lda model.')
     parser.add_option('--topic_word_accumulated_prob_threshold', type=float, \
             default=0.5, help='the accumulated_prob_threshold of topic words.')
     parser.add_option('--save_checkpoint_interval', type=int, default=10, \
-            help='the interval of save_checkpoint action.')
+            help='the interval to save checkpoint.')
     parser.add_option('--checkpoint_dir', help='the checkpoint directory.')
     parser.add_option('--compute_loglikelihood_interval', type=int, \
-            default=10, help='the interval of compute_loglikelihood action.')
+            default=10, help='the interval to compute loglikelihood.')
 
     (options, args) = parser.parse_args()
     logging.basicConfig(filename = os.path.join(os.getcwd(), 'log.txt'), \

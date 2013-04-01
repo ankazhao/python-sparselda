@@ -1,6 +1,6 @@
 ## python-sparselda
 ================
-python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and developed with Python. 
+python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and developed with Python.
 RTFSC for more details.
 
 Please use the github issue tracker for python-sparselda at:
@@ -18,53 +18,49 @@ https://github.com/fandywang/python-sparselda/issues
     cd python
     python ./setup.py build
     sudo python ./setup.py install
-    
+
     cd python-sparselda/common
     protoc -I=. --python_out=. lda.proto
 
 ### 2. Training
-    usage: lda_trainer.py [-h] --corpus_dir CORPUS_DIR --vocabulary_file VOCABULARY_FILE --num_topics NUM_TOPICS
-                      [--topic_prior TOPIC_PRIOR] [--word_prior WORD_PRIOR] [--total_iterations TOTAL_ITERATIONS] 
-                      --model_dir MODEL_DIR [--save_model_interval SAVE_MODEL_INTERVAL]
-                      [--topic_word_accumalated_prob_threshold TOPIC_WORD_ACCUMALATED_PROB_THRESHOLD]
-                      [--is_save_checkpoint] [--save_checkpoint_interval SAVE_CHECKPOINT_INTERVAL]
-                      [--checkpoint_dir CHECKPOINT_DIR] [--compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL]
+    Usage: python lda_trainer.py [options].
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      --corpus_dir CORPUS_DIR
-                            the corpus directory.
-      --vocabulary_file VOCABULARY_FILE
-                            the vocabulary file.
-      --num_topics NUM_TOPICS
-                            the num of topics.
-      --topic_prior TOPIC_PRIOR
-                            the topic prior alpha.
-      --word_prior WORD_PRIOR
-                            the word prior beta.
-      --total_iterations TOTAL_ITERATIONS
-                            the total iteration.
-      --model_dir MODEL_DIR
-                            the model directory.
-      --save_model_interval SAVE_MODEL_INTERVAL
-                            the interval of save_model action.
-      --topic_word_accumalated_prob_threshold TOPIC_WORD_ACCUMALATED_PROB_THRESHOLD
-                            the accumalated_prob_threshold of topic words.
-      --is_save_checkpoint  whether or not to save checkpoint.
-      --save_checkpoint_interval SAVE_CHECKPOINT_INTERVAL
-                            the interval of save_checkpoint action.
-      --checkpoint_dir CHECKPOINT_DIR
-                            the checkpoint directory.
-      --compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL
-                            the interval of compute_loglikelihood action.    
+    Options:
+    -h, --help   show this help message and exit
+    --corpus_dir=CORPUS_DIR
+            the corpus directory.
+    --vocabulary_file=VOCABULARY_FILE
+            the vocabulary file.
+    --num_topics=NUM_TOPICS
+            the num of topics.
+    --topic_prior=TOPIC_PRIOR
+            the topic prior alpha.
+    --word_prior=WORD_PRIOR
+            the word prior beta.
+    --total_iterations=TOTAL_ITERATIONS
+            the total iteration.
+    --model_dir=MODEL_DIR
+            the model directory.
+    --save_model_interval=SAVE_MODEL_INTERVAL
+            the interval of save_model action.
+    --topic_word_accumulated_prob_threshold=TOPIC_WORD_ACCUMULATED_PROB_THRESHOLD
+            the accumulated_prob_threshold of topic words.
+    --save_checkpoint_interval=SAVE_CHECKPOINT_INTERVAL
+            the interval of save checkpoint action.
+    --checkpoint_dir=CHECKPOINT_DIR
+            the checkpoint directory.
+    --compute_loglikelihood_interval=COMPUTE_LOGLIKELIHOOD_INTERVAL
+            the interval of compute_loglikelihood action.
 ### 3. Inference
+    See example: lda_inferencer.py
 ### 4. Evaluation
+    Instead of manual evaluation, we want to evaluate topics quality automatically, and filter out a few meaningless topics to enchance the inference effect.
 
 ## TODO
 ================
-1. Optimize hyperparameters.
-2. Infer topic top words distribution.
-3. Parallelization or Multi-threading.
+1. Hyperparameters optimization.
+2. Memory optimization.
+3. More experiments.
 
 ## References
 ================

@@ -63,8 +63,10 @@ def main(args):
 
 if __name__ == '__main__':
     parser = optparse.OptionParser('usage: python lda_trainer.py -h.')
-    parser.add_option('--corpus_dir', help='the corpus directory.')
-    parser.add_option('--vocabulary_file', help='the vocabulary file.')
+    parser.add_option('--corpus_dir', \
+            help='the corpus directory, line fmt: w1 \t w2 \t w3 ... .')
+    parser.add_option('--vocabulary_file', \
+            help='the vocabulary file, line fmt: w [\tfreq].')
     parser.add_option('--num_topics', type=int, help='the num of topics.')
     parser.add_option('--topic_prior', type=float, default=0.1, \
             help='the topic prior alpha.')

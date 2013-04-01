@@ -65,6 +65,7 @@ Instead of manual evaluation, we want to evaluate topics quality automatically, 
 1. Hyperparameters optimization.
 2. Memory optimization.
 3. More experiments.
+4. Data and model parallelization.
 
 ## References
 ================

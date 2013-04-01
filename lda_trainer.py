@@ -4,8 +4,8 @@
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
 
-import argparse
 import logging
+import optparse
 import os
 import random
 
@@ -29,6 +29,12 @@ def main(args):
         logging.info('sparselda trainer, gibbs sampling iteration %d.' % (i + 1))
         sparselda_train_gibbs_sampler.gibbs_sampling(rand)
 
+        if i == 0:
+            topic_words_stat = TopicWordsStat(model, vocabulary)
+            topic_words_stat.save( \
+                    args.model_dir + '/topic_top_words.%d' % (i + 1),
+                    args.topic_word_accumulated_prob_threshold)
+
         # dump lda model
         if (i + 1) % args.save_model_interval == 0:
             logging.info('iteration %d start saving lda model.' % (i + 1))
@@ -41,8 +47,7 @@ def main(args):
             logging.info('iteration %d save lda model ok.' % (i + 1))
 
         # dump checkpoint
-        if args.is_save_checkpoint and \
-                (i + 1) % args.save_checkpoint_interval == 0:
+        if (i + 1) % args.save_checkpoint_interval == 0:
             logging.info('iteration %d start saving checkpoint.' % (i + 1))
             sparselda_train_gibbs_sampler.save_checkpoint( \
                     args.checkpoint_dir, i + 1)
@@ -57,36 +62,31 @@ def main(args):
             logging.info('iteration %d loglikelihood is %f.' % (i + 1, ll))
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='SparseLDA trainer.')
-    parser.add_argument('--corpus_dir', required=True, \
-            help='the corpus directory.')
-    parser.add_argument('--vocabulary_file', required=True, \
-            help='the vocabulary file.')
-    parser.add_argument('--num_topics', type=int, required=True, \
-            help='the num of topics.')
-    parser.add_argument('--topic_prior', type=float, default=0.1, \
+    parser = optparse.OptionParser('usage: python lda_trainer.py -h.')
+    parser.add_option('--corpus_dir', help='the corpus directory.')
+    parser.add_option('--vocabulary_file', help='the vocabulary file.')
+    parser.add_option('--num_topics', type=int, help='the num of topics.')
+    parser.add_option('--topic_prior', type=float, default=0.1, \
             help='the topic prior alpha.')
-    parser.add_argument('--word_prior', type=float, default=0.01, \
+    parser.add_option('--word_prior', type=float, default=0.01, \
             help='the word prior beta.')
-    parser.add_argument('--total_iterations', type=int, default=10000, \
+    parser.add_option('--total_iterations', type=int, default=10000, \
             help='the total iteration.')
-    parser.add_argument('--model_dir', required=True, \
-            help='the model directory.')
-    parser.add_argument('--save_model_interval', type=int, default=100, \
+    parser.add_option('--model_dir', help='the model directory.')
+    parser.add_option('--save_model_interval', type=int, default=100, \
             help='the interval of save_model action.')
-    parser.add_argument('--topic_word_accumalated_prob_threshold', type=float, \
-            default=0.8, help='the accumalated_prob_threshold of topic words.')
-    parser.add_argument('--is_save_checkpoint', action='store_true', \
-            help='whether or not to save checkpoint.')
-    parser.add_argument('--save_checkpoint_interval', type=int, default=10, \
+    parser.add_option('--topic_word_accumulated_prob_threshold', type=float, \
+            default=0.5, help='the accumulated_prob_threshold of topic words.')
+    parser.add_option('--save_checkpoint_interval', type=int, default=10, \
             help='the interval of save_checkpoint action.')
-    parser.add_argument('--checkpoint_dir', help='the checkpoint directory.')
-    parser.add_argument('--compute_loglikelihood_interval', type=int, \
+    parser.add_option('--checkpoint_dir', help='the checkpoint directory.')
+    parser.add_option('--compute_loglikelihood_interval', type=int, \
             default=10, help='the interval of compute_loglikelihood action.')
 
-    args = parser.parse_args()
+    (options, args) = parser.parse_args()
     logging.basicConfig(filename = os.path.join(os.getcwd(), 'log.txt'), \
-            level = logging.DEBUG, filemode = 'w', \
+            level = logging.DEBUG, filemode = 'a', \
             format = '%(asctime)s - %(levelname)s: %(message)s')
+    logging.info('Parameters : %s' % str(options))
 
-    main(args)
+    main(options)

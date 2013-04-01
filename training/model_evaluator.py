@@ -41,10 +41,11 @@ class ModelEvaluator(object):
         """
         loglikelihood = 0.0
         for document in documents:
-            doc_dense_topic_dist = \
-                    self._compute_doc_topic_distribution(document)
+            doc_dense_topic_dist = self._compute_doc_topic_distribution(document)
             doc_loglikelihood = 0.0
             for word in document.words:
+                if word.id not in self.model.word_topic_hist:
+                    continue
                 word_topic_dist = self.word_topic_dist[word.id]
                 for topic, prob in enumerate(word_topic_dist):
                     doc_loglikelihood += \

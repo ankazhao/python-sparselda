@@ -85,7 +85,8 @@ class SparseLDATrainGibbsSampler(object):
         Line format: token1 \t token2 \t token3 \t ... ...
         """
         self.documents = []
-        self.model = Model(self.model.num_topics)
+        self.model.global_topic_hist = [0] * self.model.num_topics
+        self.model.word_topic_hist = {}
         rand = random.Random()
 
         logging.info('Load corpus from %s.' % corpus_dir)

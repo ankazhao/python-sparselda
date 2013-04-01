@@ -26,7 +26,7 @@ class TopicWordsStat(object):
         fp.close()
 
     def get_topic_top_words(self, accumulated_prob_threshold):
-        """Returns topics' top words as string.
+        """Returns topics' top words.
         """
         topic_top_words = []
         sparse_topic_word_dist = self.compute_topic_word_distribution()
@@ -34,11 +34,10 @@ class TopicWordsStat(object):
         for topic, word_probs in enumerate(sparse_topic_word_dist):
             top_words = []
             top_words.append(str(topic))
-            top_words.append( \
-                    str(self.model.global_topic_hist[topic]))
+            top_words.append(str(self.model.global_topic_hist[topic]))
             accumulated_prob = 0.0
             for word_prob in word_probs:
-                top_words.append(self.vocabulary.word(word_prob[0]))
+                top_words.append(self.vocabulary.word(word_prob[0]).encode('gbk', 'ignore'))
                 top_words.append(str(word_prob[1]))
                 accumulated_prob += word_prob[1]
                 if accumulated_prob > accumulated_prob_threshold:
@@ -51,12 +50,13 @@ class TopicWordsStat(object):
         """Compute the topic word distribution p(w|z), indexed by topic z.
         """
         # item fmt: z -> <w, p(w|z)>
-        sparse_topic_word_dist = [[]] * self.model.num_topics
+        sparse_topic_word_dist = []
+        for topic in xrange(self.model.num_topics):
+            sparse_topic_word_dist.append([])
 
         for word_id, ordered_sparse_topic_hist in \
                 self.model.word_topic_hist.items():
-            for non_zero in \
-                    ordered_sparse_topic_hist.non_zeros:
+            for non_zero in ordered_sparse_topic_hist.non_zeros:
                 sparse_topic_word_dist[non_zero.topic].append( \
                         [word_id, \
                         (non_zero.count + self.model.hyper_params.word_prior) / \
@@ -64,6 +64,6 @@ class TopicWordsStat(object):
                         self.model.global_topic_hist[non_zero.topic])])
 
         for topic, word_probs in enumerate(sparse_topic_word_dist):
-            sorted(word_probs, cmp=lambda x,y:cmp(x[1], y[1]), reverse=True)
+            word_probs.sort(cmp=lambda x,y:cmp(x[1], y[1]), reverse=True)
 
         return sparse_topic_word_dist

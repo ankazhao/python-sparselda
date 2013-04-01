@@ -52,15 +52,24 @@ https://github.com/fandywang/python-sparselda/issues
       --compute_loglikelihood_interval=COMPUTE_LOGLIKELIHOOD_INTERVAL
                             the interval of compute_loglikelihood action.
 ### 3. Inference
-     model = Model(0)
-     model.load('../testdata/lda_model')                                     
-     vocabulary = Vocabulary()                                               
-     vocabulary.load('../testdata/vocabulary.dat')                           
-     multi_chain_gibbs_sampler = MultiChainGibbsSampler(model, vocabulary, 10, 10, 5)            
-     
-     doc_tokens = ['apple', 'ipad']                                          
-     doc_topic_dist = self.multi_chain_gibbs_sampler.infer_topics(doc_tokens)
-     print doc_topic_dist 
+     Usage: python lda_inference.py -h.
+
+     Options:
+      -h, --help            show this help message and exit
+      --model_dir=MODEL_DIR
+                            the lda model directory.
+      --vocabulary_file=VOCABULARY_FILE
+                            the vocabulary file.
+      --document_file_file=DOCUMENT_FILE_FILE
+                           the document file in gbk, line fmt: w1 \t w2 \t w3 ... .
+      --num_markov_chains=NUM_MARKOV_CHAINS
+                            the num of markov chains.
+      --total_iterations=TOTAL_ITERATIONS
+                            the num of total_iterations.
+      --burn_in_iterations=BURN_IN_ITERATIONS
+                            the num of burn_in iteration.
+                            
+    
 ### 4. Evaluation
 
 ## TODO

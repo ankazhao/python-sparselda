@@ -23,41 +23,44 @@ https://github.com/fandywang/python-sparselda/issues
     protoc -I=. --python_out=. lda.proto
 
 ### 2. Training
-    usage: lda_trainer.py [-h] --corpus_dir CORPUS_DIR --vocabulary_file VOCABULARY_FILE --num_topics NUM_TOPICS
-                      [--topic_prior TOPIC_PRIOR] [--word_prior WORD_PRIOR] [--total_iterations TOTAL_ITERATIONS] 
-                      --model_dir MODEL_DIR [--save_model_interval SAVE_MODEL_INTERVAL]
-                      [--topic_word_accumalated_prob_threshold TOPIC_WORD_ACCUMALATED_PROB_THRESHOLD]
-                      [--is_save_checkpoint] [--save_checkpoint_interval SAVE_CHECKPOINT_INTERVAL]
-                      [--checkpoint_dir CHECKPOINT_DIR] [--compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL]
+    Usage: python lda_trainer.py -h.
 
-    optional arguments:
+    Options:
       -h, --help            show this help message and exit
-      --corpus_dir CORPUS_DIR
+      --corpus_dir=CORPUS_DIR
                             the corpus directory.
-      --vocabulary_file VOCABULARY_FILE
+      --vocabulary_file=VOCABULARY_FILE
                             the vocabulary file.
-      --num_topics NUM_TOPICS
+      --num_topics=NUM_TOPICS
                             the num of topics.
-      --topic_prior TOPIC_PRIOR
+      -topic_prior=TOPIC_PRIOR
                             the topic prior alpha.
-      --word_prior WORD_PRIOR
+      --word_prior=WORD_PRIOR
                             the word prior beta.
-      --total_iterations TOTAL_ITERATIONS
+      --total_iterations=TOTAL_ITERATIONS
                             the total iteration.
-      --model_dir MODEL_DIR
+      --model_dir=MODEL_DIR
                             the model directory.
-      --save_model_interval SAVE_MODEL_INTERVAL
+      --save_model_interval=SAVE_MODEL_INTERVAL
                             the interval of save_model action.
-      --topic_word_accumalated_prob_threshold TOPIC_WORD_ACCUMALATED_PROB_THRESHOLD
-                            the accumalated_prob_threshold of topic words.
-      --is_save_checkpoint  whether or not to save checkpoint.
-      --save_checkpoint_interval SAVE_CHECKPOINT_INTERVAL
+      --topic_word_accumulated_prob_threshold=TOPIC_WORD_ACCUMULATED_PROB_THRESHOLD
+                            the accumulated_prob_threshold of topic words.
+      --save_checkpoint_interval=SAVE_CHECKPOINT_INTERVAL
                             the interval of save_checkpoint action.
-      --checkpoint_dir CHECKPOINT_DIR
+      --checkpoint_dir=CHECKPOINT_DIR
                             the checkpoint directory.
-      --compute_loglikelihood_interval COMPUTE_LOGLIKELIHOOD_INTERVAL
-                            the interval of compute_loglikelihood action.    
+      --compute_loglikelihood_interval=COMPUTE_LOGLIKELIHOOD_INTERVAL
+                            the interval of compute_loglikelihood action.
 ### 3. Inference
+     model = Model(0)
+     model.load('../testdata/lda_model')                                     
+     vocabulary = Vocabulary()                                               
+     vocabulary.load('../testdata/vocabulary.dat')                           
+     multi_chain_gibbs_sampler = MultiChainGibbsSampler(model, vocabulary, 10, 10, 5)            
+     
+     doc_tokens = ['apple', 'ipad']                                          
+     doc_topic_dist = self.multi_chain_gibbs_sampler.infer_topics(doc_tokens)
+     print doc_topic_dist 
 ### 4. Evaluation
 
 ## TODO

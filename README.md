@@ -1,6 +1,6 @@
 ## python-sparselda
 ================
-python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and developed with Python.
+python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and written in Python 2.6 or newer, Python 3.0 or newer excluded.
 RTFSC for more details.
 
 Please use the github issue tracker for python-sparselda at:
@@ -9,6 +9,7 @@ https://github.com/fandywang/python-sparselda/issues
 ## Usage
 ================
 ### 1. Install Google Protocol Buffers (protobuf)
+python-sparselda uses the protobuf to serialize and persistent store lda model and checkpoint, so you should install protobuf first.
     wget https://protobuf.googlecode.com/files/protobuf-2.5.0.tar.bz2
     tar -zxvf protobuf-2.5.0.tar.bz2
     cd protobuf-2.5.0
@@ -54,7 +55,7 @@ https://github.com/fandywang/python-sparselda/issues
 ### 3. Inference
     See example: lda_inferencer.py
 ### 4. Evaluation
-    Instead of manual evaluation, we want to evaluate topics quality automatically, and filter out a few meaningless topics to enchance the inference effect.
+Instead of manual evaluation, we want to evaluate topics quality automatically, and filter out a few meaningless topics to enchance the inference effect.
 
 ## TODO
 ================

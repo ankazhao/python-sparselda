@@ -10,7 +10,7 @@ https://github.com/fandywang/python-sparselda/issues
 ## Usage
 ================
 ### 1. Install Google Protocol Buffers
-python-sparselda uses the protobuf to serialize and persistent store lda model and checkpoint, so you should install protobuf first.
+python-sparselda serialize and persistent store the lda model and checkpoint based on protobuf, so you should install it first.
     
     wget https://protobuf.googlecode.com/files/protobuf-2.5.0.tar.bz2
     tar -zxvf protobuf-2.5.0.tar.bz2

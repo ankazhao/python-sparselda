@@ -55,7 +55,7 @@ python-sparselda serialize and persistent store the lda model and checkpoint bas
     --compute_loglikelihood_interval=COMPUTE_LOGLIKELIHOOD_INTERVAL
             the interval to compute loglikelihood.
 ### 3. Inference
-Pls refer example code: lda_inferencer.py. Note that we strongly recommend you to use MultiChainGibbsSampler class.
+Please refer the example: lda_inferencer.py. Note that we strongly recommend you to use MultiChainGibbsSampler class.
 
 ### 4. Evaluation
 Instead of manual evaluation, we want to evaluate topics quality automatically, and filter out a few meaningless topics to enchance the inference effect.

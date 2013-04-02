@@ -131,7 +131,7 @@ class SparseLDAGibbsSampler(object):
         Returns the new topic.
         """
         doc_topic_bucket, doc_topic_sum = \
-                self._calc_doc_topic_bucket(doc, word)
+                self._compute_doc_topic_bucket(doc, word)
 
         total_mass = self.smoothing_only_sum[word] + doc_topic_sum
         sample = rand.uniform(0.0, total_mass)
@@ -153,8 +153,8 @@ class SparseLDAGibbsSampler(object):
                 % (sample, dist_sum))
         return None
 
-    def _calc_doc_topic_bucket(self, doc, word):
-        """Calculate the document topic bucket r(z, w, d).
+    def _compute_doc_topic_bucket(self, doc, word):
+        """Compute the document topic bucket r(z, w, d).
 
         Returns document-topic distributions and their sum.
         """

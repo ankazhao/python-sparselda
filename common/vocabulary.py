@@ -15,6 +15,8 @@ class Vocabulary(object):
         """read words from filename.
         line fmt: word [\t count]
         """
+        self.word_map.clear()
+        self.words = []
         fp = open(filename, 'r')
         for line in fp.readlines():
             line = line.decode('gbk')
@@ -36,3 +38,4 @@ class Vocabulary(object):
 
     def size(self):
         return len(self.words)
+

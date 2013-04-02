@@ -78,9 +78,9 @@ class OrderedSparseTopicHistogram(object):
         # ensure that topics sorted by their counts.
         non_zero = copy.copy(self.non_zeros[index])
         while index > 0 and non_zero.count > self.non_zeros[index - 1].count:
-            self.non_zeros[index] = copy.copy(self.non_zeros[index - 1])
+            self.non_zeros[index] = self.non_zeros[index - 1]
             index -= 1
-        self.non_zeros[index] = copy.copy(non_zero)
+        self.non_zeros[index] = non_zero
 
     def decrease_topic(self, topic, count = 1):
         """subtract count from topic.
@@ -101,13 +101,12 @@ class OrderedSparseTopicHistogram(object):
         non_zero = copy.copy(self.non_zeros[index])
         while index < len(self.non_zeros) - 1 and \
                 non_zero.count < self.non_zeros[index + 1].count:
-                    self.non_zeros[index] = \
-                            copy.copy(self.non_zeros[index + 1])
+                    self.non_zeros[index] = self.non_zeros[index + 1]
                     index += 1
         if non_zero.count == 0:
             del self.non_zeros[index:]
         else:
-            self.non_zeros[index] = copy.copy(non_zero)
+            self.non_zeros[index] = non_zero
 
     def __str__(self):
         """Outputs a human-readable representation of the model.

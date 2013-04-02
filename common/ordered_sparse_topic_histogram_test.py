@@ -1,9 +1,8 @@
 #!/usr/bin/env  python
 # coding=utf-8
 
-# author: Lifeng Wang (ofandywang@gmail.com)
-# date: 2013.03.18
-# project: python-sparselda
+# Copyright(c) 2013 python-sparselda project.
+# Author: Lifeng Wang (ofandywang@gmail.com)
 
 import unittest
 

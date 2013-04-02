@@ -61,7 +61,7 @@ class Model(object):
     WORD_TOPIC_HIST_FILENAME = "lda.word_topic_hist"
     HYPER_PARAMS_FILENAME = "lda.hyper_params"
 
-    def __init__(self, num_topics, topic_prior = 0.01, word_prior = 0.1):
+    def __init__(self, num_topics, topic_prior = 0.1, word_prior = 0.01):
         self.num_topics = num_topics
 
         self.global_topic_hist = [0] * self.num_topics  # item fmt: N(z)

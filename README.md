@@ -106,6 +106,7 @@ The checkpoint mainly includes two types files.
 
 ### 3. Inference
 Please refer the example: lda_inferencer.py. 
+
 **Note that** we strongly recommend you to use `MultiChainGibbsSampler` class for trade off between efficiency and effectiveness.
 
 ### 4. Evaluation

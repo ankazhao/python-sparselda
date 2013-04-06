@@ -26,6 +26,7 @@ python-sparselda serialize and persistent store the lda model and checkpoint bas
     protoc -I=. --python_out=. lda.proto
 
 ### 2. Training
+#### 2.1 Command line
     Usage: python lda_trainer.py [options].
 
     Options:
@@ -54,6 +55,55 @@ python-sparselda serialize and persistent store the lda model and checkpoint bas
             the checkpoint directory.
     --compute_loglikelihood_interval=COMPUTE_LOGLIKELIHOOD_INTERVAL
             the interval to compute loglikelihood.
+
+#### 2.2 Input corpus format
+The corpus for training/estimating the model have the line format as follows:
+   
+    [document1]
+    [document2]
+    ...
+    [documentM]
+
+in which each line is one document. [documenti] is the ith document of the dataset that consists of a list of Ni words/terms.
+    
+    [documenti] = [wordi1]\t[wordi2]\t...\t[wordiNi]
+
+in which all [wordij] &lt;i=1...M, j=1...Ni&gt; are text strings and they are separated by the tab character.
+
+**Note that** the terms document and word here are abstract and should not only be understood as normal text documents. 
+This's because LDA can be used to discover the underlying topic structures of any kind of discrete data. Therefore, 
+python-sparselda is not limited to text and natural language processing but can also be applied to other kinds of data 
+like images. 
+
+Also, keep in mind that for text/Web data collections, you should first preprocess the data (e.g., word segment, 
+removing stopwords and rare words, stemming, etc.) before estimating with python-sparselda.
+
+#### 2.3 Input vocabulary format
+The vocabulary for training/estimating the model have the line format as follows:
+   
+    [word1]
+    [word2]
+    ...
+    [wordV]
+
+in which each line is a unique word. Words only appear in vocabulary will be considered for parameter estimation.
+
+#### 2.4 Outputs
+##### 1) LDA Model
+It includs three files.
+* lda.topic_word_hist: This file contains the word-topic histograms, i.e., N(word|topic). 
+* lda.global_topic_hist: This file contains the global topic histogram, i.e., N(topic).
+* lda.hyper_params: This file contails the hyperparams, i.e., alpha and beta.
+
+##### 2) Checkpoint
+Every `--save_checkpoint_interval` iterations, the lda_trainer will dump current checkpoint for fault tolerance. 
+The checkpoint mainly includes two types files.
+* LDA Model: See above.
+* Corpus: This directory contains serialized documents.
+
+##### 3) Topic words
+* lda.topic_words: This file contains most likely words of each topic. The number of topic top words is depend on `--topic_word_accumulated_prob_threshold`.
+
 ### 3. Inference
 Please refer the example: lda_inferencer.py. Note that we strongly recommend you to use MultiChainGibbsSampler class.
 
@@ -69,15 +119,15 @@ Instead of manual evaluation, we want to evaluate topics quality automatically, 
 
 ## References
 ================
-1. Blei, A. Ng, and M. Jordan. Latent Dirichlet allocation. Journal of Machine Learning Research, 2003.
-2. Gregor Heinrich. Parameter estimation for text analysis. Technical Note, 2004.
-3. Griﬃths, T. L., & Steyvers, M. Finding scientiﬁc topics. Proceedings of the National Academy of Sciences(PNAS), 2004.
-4. I. Porteous, D. Newman, A. Ihler, A. Asuncion, P. Smyth, and M. Welling. Fast collapsed Gibbs sampling for latent Dirichlet allocation. In SIGKDD, 2008.
-5. Limin Yao, David Mimno, Andrew McCallum. Efficient methods for topic model inference on streaming document collections, In SIGKDD, 2009.
-6. Newman et al. Distributed Inference for Latent Dirichlet Allocation, NIPS 2007.
-7. X. Wei, W. Bruce Croft. LDA-based document models for ad hoc retrieval. In Proc. SIGIR. 2006.
-7. Rickjin, LDA 数学八卦. Technical Note, 2013.
-8. Yi Wang, Hongjie Bai, Matt Stanton, Wen-Yen Chen, and Edward Y. Chang. PLDA: Parallel Latent Dirichlet Allocation for Large-scale Applications. AAIM 2009.
+1. Blei, A. Ng, and M. Jordan. [Latent Dirichlet allocation](http://www.cs.princeton.edu/~blei/papers/BleiNgJordan2003.pdf). Journal of Machine Learning Research, 2003.
+2. Gregor Heinrich. [Parameter estimation for text analysis](http://www.arbylon.net/publications/text-est.pdf). Technical Note, 2004.
+3. Griﬃths, T. L., & Steyvers, M. [Finding scientiﬁc topics](http://www.pnas.org/content/101/suppl.1/5228.full.pdf). Proceedings of the National Academy of Sciences(PNAS), 2004.
+4. I. Porteous, D. Newman, A. Ihler, A. Asuncion, P. Smyth, and M. Welling. [Fast collapsed Gibbs sampling for latent Dirichlet allocation](http://www.ics.uci.edu/~asuncion/pubs/KDD_08.pdf). In SIGKDD, 2008.
+5. Limin Yao, David Mimno, Andrew McCallum. [Efficient methods for topic model inference on streaming document collections](https://www.cs.umass.edu/~mimno/papers/fast-topic-model.pdf), In SIGKDD, 2009.
+6. Newman et al. [Distributed Inference for Latent Dirichlet Allocation](http://www.csee.ogi.edu/~zak/cs506-pslc/dist_lda.pdf), NIPS 2007.
+7. X. Wei, W. Bruce Croft. [LDA-based document models for ad hoc retrieval](http://www.bradblock.com/LDA_Based_Document_Models_for_Ad_hoc_Retrieval.pdf). In Proc. SIGIR. 2006.
+7. Rickjin, [LDA 数学八卦](http://vdisk.weibo.com/s/q0sGh/1360334108?utm_source=weibolife). Technical Note, 2013.
+8. Yi Wang, Hongjie Bai, Matt Stanton, Wen-Yen Chen, and Edward Y. Chang. [PLDA: Parallel Latent Dirichlet Allocation for Large-scale Applications](http://plda.googlecode.com/files/aaim.pdf). AAIM 2009.
 
 ## Links
 ===============

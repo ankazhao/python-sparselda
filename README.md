@@ -137,12 +137,12 @@ Here are some pointers to other implementations of LDA.
 
 1. [LDA-C](http://www.cs.princeton.edu/~blei/lda-c/index.html): A C implementation of variational EM for latent Dirichlet allocation (LDA), a topic model for text or other discrete data.
 2. [GibbsLDA++](http://gibbslda.sourceforge.net/): A C/C++ implementation of Latent Dirichlet Allocation (LDA) using Gibbs Sampling technique for parameter estimation and inference.
-3. [Matlab Topic Modeling Toolbox](http://psiexp.ss.uci.edu/research/programs_data/toolbox.htm)
-4. [lda-j](http://www.arbylon.net/projects/): Java version of LDA-C and a short Java version of Gibbs Sampling for LDA.
-5. [Mr. LDA](https://github.com/lintool/Mr.LDA): A Latent Dirichlet Allocation topic modeling package based on Variational Bayesian learning approach using MapReduce and Hadoop, developed by a Cloud Computing Research Team in University of Maryland, College Park.
-6. [Yahoo_LDA](https://github.com/sudar/Yahoo_LDA): Y!LDA Topic Modelling Framework, it provides a fast C++ implementation of the inferencing algorithm which can use both multi-core parallelism and multi-machine parallelism using a hadoop cluster. It can infer about a thousand topics on a million document corpus while running for a thousand iterations on an eight core machine in one day.
-7. [plda/plda+](https://code.google.com/p/plda/): A parallel C++ implementation of Latent Dirichlet Allocation (LDA).
-8. [Mahout](https://cwiki.apache.org/confluence/display/MAHOUT/Latent+Dirichlet+Allocation): Mahout's goal is to build scalable machine learning libraries. 
-9. [MALLET ](http://mallet.cs.umass.edu/): A Java-based package for statistical natural language processing, document classification, clustering, topic modeling, information extraction, and other machine learning applications to text.
-10. [ompi-lda](https://code.google.com/p/ompi-lda/): OpenMP and MPI Based Paralllel Implementation of LDA.
-11. [lda-go](https://code.google.com/p/lda-go/): Gibbs sampling training and inference of the Latent Dirichlet Allocation model written in Google's Go programming language.
+3. [plda/plda+](https://code.google.com/p/plda/): A parallel C++ implementation of Latent Dirichlet Allocation (LDA).
+4. [Mr. LDA](https://github.com/lintool/Mr.LDA): A Latent Dirichlet Allocation topic modeling package based on Variational Bayesian learning approach using MapReduce and Hadoop, developed by a Cloud Computing Research Team in University of Maryland, College Park.
+5. [Yahoo_LDA](https://github.com/sudar/Yahoo_LDA): Y!LDA Topic Modelling Framework, it provides a fast C++ implementation of the inferencing algorithm which can use both multi-core parallelism and multi-machine parallelism using a hadoop cluster. It can infer about a thousand topics on a million document corpus while running for a thousand iterations on an eight core machine in one day.
+6. [Mahout](https://cwiki.apache.org/confluence/display/MAHOUT/Latent+Dirichlet+Allocation): Mahout's goal is to build scalable machine learning libraries. 
+7. [MALLET ](http://mallet.cs.umass.edu/): A Java-based package for statistical natural language processing, document classification, clustering, topic modeling, information extraction, and other machine learning applications to text.
+8. [ompi-lda](https://code.google.com/p/ompi-lda/): OpenMP and MPI Based Paralllel Implementation of LDA.
+9. [lda-go](https://code.google.com/p/lda-go/): Gibbs sampling training and inference of the Latent Dirichlet Allocation model written in Google's Go programming language.
+10. [Matlab Topic Modeling Toolbox](http://psiexp.ss.uci.edu/research/programs_data/toolbox.htm)
+11. [lda-j](http://www.arbylon.net/projects/): Java version of LDA-C and a short Java version of Gibbs Sampling for LDA.

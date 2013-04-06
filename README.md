@@ -105,7 +105,8 @@ The checkpoint mainly includes two types files.
 * lda.topic_words: This file contains most likely words of each topic. The number of topic top words is depend on `--topic_word_accumulated_prob_threshold`.
 
 ### 3. Inference
-Please refer the example: lda_inferencer.py. Note that we strongly recommend you to use MultiChainGibbsSampler class.
+Please refer the example: lda_inferencer.py. 
+**Note that** we strongly recommend you to use `MultiChainGibbsSampler` class for trade off between efficiency and effectiveness.
 
 ### 4. Evaluation
 Instead of manual evaluation, we want to evaluate topics quality automatically, and filter out a few meaningless topics to enchance the inference effect.

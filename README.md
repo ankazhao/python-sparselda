@@ -1,6 +1,6 @@
 ## python-sparselda
 ================
-python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and written in Python 2.6 or newer, Python 3.0 or newer excluded.
+python-sparselda is a Latent Dirichlet Allocation topic modeling package based on SparseLDA Gibbs Sampling inference algorithm, and written in Python 2.6 or newer, Python 3.0 or newer excluded. 
 
 Frankly, python-sparselda is just a mini project, we hope it can help you better understand the standard LDA and SparseLDA algorithms. RTFSC for more details. Have fun.
 
@@ -74,5 +74,20 @@ Instead of manual evaluation, we want to evaluate topics quality automatically, 
 3. Griﬃths, T. L., & Steyvers, M. Finding scientiﬁc topics. Proceedings of the National Academy of Sciences(PNAS), 2004.
 4. I. Porteous, D. Newman, A. Ihler, A. Asuncion, P. Smyth, and M. Welling. Fast collapsed Gibbs sampling for latent Dirichlet allocation. In SIGKDD, 2008.
 5. Limin Yao, David Mimno, Andrew McCallum. Efficient methods for topic model inference on streaming document collections, In SIGKDD, 2009.
+6. Newman et al. Distributed Inference for Latent Dirichlet Allocation, NIPS 2007.
 7. X. Wei, W. Bruce Croft. LDA-based document models for ad hoc retrieval. In Proc. SIGIR. 2006.
-8. Rickjin, LDA 数学八卦. Technical Note, 2013.
+7. Rickjin, LDA 数学八卦. Technical Note, 2013.
+8. Yi Wang, Hongjie Bai, Matt Stanton, Wen-Yen Chen, and Edward Y. Chang. PLDA: Parallel Latent Dirichlet Allocation for Large-scale Applications. AAIM 2009.
+
+## Links
+===============
+Here are some pointers to other implementations of LDA.
+1. [LDA-C](http://www.cs.princeton.edu/~blei/lda-c/index.html): A C implementation of variational EM for latent Dirichlet allocation (LDA), a topic model for text or other discrete data.
+2. [GibbsLDA++](http://gibbslda.sourceforge.net/): A C/C++ implementation of Latent Dirichlet Allocation (LDA) using Gibbs Sampling technique for parameter estimation and inference.
+3. [Matlab Topic Modeling Toolbox](http://psiexp.ss.uci.edu/research/programs_data/toolbox.htm)
+4. [lda-j](http://www.arbylon.net/projects/): Java version of LDA-C and a short Java version of Gibbs Sampling for LDA.
+5. [Mr. LDA](https://github.com/lintool/Mr.LDA): A Latent Dirichlet Allocation topic modeling package based on Variational Bayesian learning approach using MapReduce and Hadoop, developed by a Cloud Computing Research Team in University of Maryland, College Park.
+6. [Yahoo_LDA](https://github.com/sudar/Yahoo_LDA): Y!LDA Topic Modelling Framework, it provides a fast C++ implementation of the inferencing algorithm which can use both multi-core parallelism and multi-machine parallelism using a hadoop cluster. It can infer about a thousand topics on a million document corpus while running for a thousand iterations on an eight core machine in one day.
+7. [plda/plda+](https://code.google.com/p/plda/): A parallel C++ implementation of Latent Dirichlet Allocation (LDA).
+8. [Mahout](https://cwiki.apache.org/confluence/display/MAHOUT/Latent+Dirichlet+Allocation): Mahout's goal is to build scalable machine learning libraries. 
+9. [MALLET ](http://mallet.cs.umass.edu/): A Java-based package for statistical natural language processing, document classification, clustering, topic modeling, information extraction, and other machine learning applications to text.

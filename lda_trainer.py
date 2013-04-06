@@ -29,32 +29,26 @@ def main(args):
         logging.info('sparselda trainer, gibbs sampling iteration %d.' % (i + 1))
         sparselda_train_gibbs_sampler.gibbs_sampling(rand)
 
-        if i == 0:
-            topic_words_stat = TopicWordsStat(model, vocabulary)
-            topic_words_stat.save( \
-                    args.model_dir + '/topic_top_words.%d' % (i + 1),
-                    args.topic_word_accumulated_prob_threshold)
-
         # dump lda model
-        if (i + 1) % args.save_model_interval == 0:
+        if i == 0 or (i + 1) % args.save_model_interval == 0:
             logging.info('iteration %d start saving lda model.' % (i + 1))
             sparselda_train_gibbs_sampler.save_model( \
                     args.model_dir, i + 1)
             topic_words_stat = TopicWordsStat(model, vocabulary)
             topic_words_stat.save( \
                     args.model_dir + '/topic_top_words.%d' % (i + 1),
-                    args.topic_word_accumalated_prob_threshold)
+                    args.topic_word_accumulated_prob_threshold)
             logging.info('iteration %d save lda model ok.' % (i + 1))
 
         # dump checkpoint
-        if (i + 1) % args.save_checkpoint_interval == 0:
+        if i == 0 or (i + 1) % args.save_checkpoint_interval == 0:
             logging.info('iteration %d start saving checkpoint.' % (i + 1))
             sparselda_train_gibbs_sampler.save_checkpoint( \
                     args.checkpoint_dir, i + 1)
             logging.info('iteration %d save checkpoint ok.' % (i + 1))
 
         # compute the loglikelihood
-        if (i + 1) % args.compute_loglikelihood_interval == 0:
+        if i == 0 or (i + 1) % args.compute_loglikelihood_interval == 0:
             logging.info('iteration %d start computing loglikelihood.' % (i + 1))
             model_evaluator = ModelEvaluator(model, vocabulary)
             ll = model_evaluator.compute_loglikelihood( \

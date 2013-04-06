@@ -54,15 +54,18 @@ class ModelEvaluator(object):
         return loglikelihood
 
     def _compute_doc_topic_distribution(self, document):
+        dense_topic_hist = [0] * self.model.num_topics
         topic_hist_sum = 0
         for non_zero in document.doc_topic_hist.non_zeros:
+            dense_topic_hist[non_zero.topic] = non_zero.count
             topic_hist_sum += non_zero.count
 
         dense_topic_dist = []
+        denominator = \
+                self.model.hyper_params.topic_prior * self.model.num_topics + \
+                topic_hist_sum
         for i in xrange(self.model.num_topics):
             dense_topic_dist.append( \
-                    self.model.hyper_params.topic_prior * \
-                    document.get_topic_count(i) / \
-                    self.model.hyper_params.topic_prior * self.model.num_topics + \
-                    topic_hist_sum)
+                    (self.model.hyper_params.topic_prior + dense_topic_hist[i]) \
+                    / denominator)
         return dense_topic_dist

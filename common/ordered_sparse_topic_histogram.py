@@ -4,8 +4,6 @@
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
 
-import copy
-
 from lda_pb2 import SparseTopicHistogramPB
 
 class NonZero(object):
@@ -52,7 +50,7 @@ class OrderedSparseTopicHistogram(object):
             self.non_zeros.append(NonZero(non_zero_pb.topic, non_zero_pb.count))
 
     def count(self, topic):
-        """returns the count of topic
+        """Returns the count of topic
         """
         for non_zero in self.non_zeros:
             if non_zero.topic == topic:
@@ -60,7 +58,7 @@ class OrderedSparseTopicHistogram(object):
         return 0
 
     def increase_topic(self, topic, count = 1):
-        """add count on topic.
+        """Adds count on topic, and returns the updated count.
         """
         assert (topic >= 0 and topic < self.num_topics and count > 0)
 
@@ -69,21 +67,22 @@ class OrderedSparseTopicHistogram(object):
             if non_zero.topic == topic:
                 non_zero.count += count
                 index = i
-                break;
+                break
 
         if index == -1:
             self.non_zeros.append(NonZero(topic, count))
             index = len(self.non_zeros) - 1
 
         # ensure that topics sorted by their counts.
-        non_zero = copy.copy(self.non_zeros[index])
+        non_zero = self.non_zeros[index]
         while index > 0 and non_zero.count > self.non_zeros[index - 1].count:
             self.non_zeros[index] = self.non_zeros[index - 1]
             index -= 1
         self.non_zeros[index] = non_zero
+        return non_zero.count
 
     def decrease_topic(self, topic, count = 1):
-        """subtract count from topic.
+        """Subtracts count from topic, and returns the updated count.
         """
         assert (topic >= 0 and topic < self.num_topics and count > 0)
 
@@ -93,12 +92,12 @@ class OrderedSparseTopicHistogram(object):
                 non_zero.count -= count
                 assert non_zero.count >= 0
                 index = i
-                break;
+                break
 
         assert index != -1
 
         # ensure that topics sorted by their counts.
-        non_zero = copy.copy(self.non_zeros[index])
+        non_zero = self.non_zeros[index]
         while index < len(self.non_zeros) - 1 and \
                 non_zero.count < self.non_zeros[index + 1].count:
                     self.non_zeros[index] = self.non_zeros[index + 1]
@@ -107,6 +106,7 @@ class OrderedSparseTopicHistogram(object):
             del self.non_zeros[index:]
         else:
             self.non_zeros[index] = non_zero
+        return non_zero.count
 
     def __str__(self):
         """Outputs a human-readable representation of the model.

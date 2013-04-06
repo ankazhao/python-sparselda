@@ -181,20 +181,19 @@ class Model(object):
         """Returns topic-word distributions matrix p(w|z), indexed by word.
         """
         word_topic_dist = {}
+        word_prior_sum = self.hyper_params.word_prior * vocab_size
 
-        # TODO(fandywang): only cache sub-matrix p(w|z) of some frequency words.
+        # TODO(fandywang): only cache sub-matrix p(w|z) of frequency words.
         for word_id, ordered_sparse_topic_hist in self.word_topic_hist.items():
             dense_topic_dist = []
             for topic in xrange(self.num_topics):
                 dense_topic_dist.append(self.hyper_params.word_prior / \
-                        (self.hyper_params.word_prior * vocab_size + \
-                        self.global_topic_hist[topic]))
+                        (word_prior_sum + self.global_topic_hist[topic]))
 
             for non_zero in ordered_sparse_topic_hist.non_zeros:
                 dense_topic_dist[non_zero.topic] = \
                         (self.hyper_params.word_prior + non_zero.count) / \
-                        (self.hyper_params.word_prior * vocab_size + \
-                        self.global_topic_hist[topic])
+                        (word_prior_sum + self.global_topic_hist[topic])
             word_topic_dist[word_id] = dense_topic_dist
 
         return word_topic_dist
@@ -203,7 +202,7 @@ class Model(object):
         """Outputs a human-readable representation of the model.
         """
         model_str = []
-        model_str.append('num_topics: %d' % self.num_topics)
+        model_str.append('NumTopics: %d' % self.num_topics)
         model_str.append('GlobalTopicHist: %s' % str(self.global_topic_hist))
         model_str.append('WordTopicHist: ')
         for word, ordered_sparse_topic_hist in self.word_topic_hist.items():

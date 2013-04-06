@@ -63,6 +63,8 @@ class SparseLDATrainGibbsSampler(object):
 
         self.model = model
         self.vocabulary = vocabulary
+        self.word_prior_sum = self.model.hyper_params.word_prior * \
+                self.vocabulary.size()
         self.documents = []  # item fmt: common.lda_pb2.Document
 
         # s(z), smoothing only bucket, indexed by topic z.
@@ -139,7 +141,8 @@ class SparseLDATrainGibbsSampler(object):
 
         # dump corpus
         corpus_dir = checkpoint_dir + '/corpus'
-        os.mkdir(corpus_dir)
+        if not os.path.exists(corpus_dir):
+            os.mkdir(corpus_dir)
         c = 1
         fp = open(corpus_dir + '/documents.%d' % c, 'wb')
         record_writer = RecordWriter(fp)
@@ -226,8 +229,7 @@ class SparseLDATrainGibbsSampler(object):
             self.smoothing_only_bucket[topic] = \
                     self.model.hyper_params.topic_prior * \
                     self.model.hyper_params.word_prior / \
-                    (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist[topic])
+                    (self.word_prior_sum + self.model.global_topic_hist[topic])
             self.smoothing_only_sum += self.smoothing_only_bucket[topic]
 
     def _calculate_doc_topic_bucket(self, document):
@@ -237,9 +239,8 @@ class SparseLDATrainGibbsSampler(object):
         self.doc_topic_bucket = [0] * self.model.num_topics
         for non_zero in document.doc_topic_hist.non_zeros:
             self.doc_topic_bucket[non_zero.topic] = \
-                    document.get_topic_count(non_zero.topic) * \
-                    self.model.hyper_params.word_prior / \
-                    (self.model.hyper_params.word_prior * self.vocabulary.size() + \
+                    non_zero.count * self.model.hyper_params.word_prior / \
+                    (self.word_prior_sum + \
                     self.model.global_topic_hist[non_zero.topic])
             self.doc_topic_sum += self.doc_topic_bucket[non_zero.topic]
 
@@ -249,8 +250,7 @@ class SparseLDATrainGibbsSampler(object):
         for topic in xrange(self.model.num_topics):
             self.topic_word_coef[topic] = \
                     self.model.hyper_params.topic_prior / \
-                    (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                    self.model.global_topic_hist[topic])
+                    (self.word_prior_sum + self.model.global_topic_hist[topic])
 
     def _update_topic_word_coefficient(self, document):
         """q_coefficient(z, d) = (alpha(z) + N(z|d)) / (beta * |V| + N(z))
@@ -258,7 +258,7 @@ class SparseLDATrainGibbsSampler(object):
         for non_zero in document.doc_topic_hist.non_zeros:
             self.topic_word_coef[non_zero.topic] = \
                     (self.model.hyper_params.topic_prior + non_zero.count) / \
-                    (self.model.hyper_params.word_prior * self.vocabulary.size() + \
+                    (self.word_prior_sum + \
                     self.model.global_topic_hist[non_zero.topic])
 
     def _reset_topic_word_coefficient(self, document):
@@ -267,7 +267,7 @@ class SparseLDATrainGibbsSampler(object):
         for non_zero in document.doc_topic_hist.non_zeros:
             self.topic_word_coef[non_zero.topic] = \
                     self.model.hyper_params.topic_prior / \
-                    (self.model.hyper_params.word_prior * self.vocabulary.size() + \
+                    (self.word_prior_sum + \
                     self.model.global_topic_hist[non_zero.topic])
 
     def _calculate_topic_word_bucket(self, word):
@@ -287,27 +287,22 @@ class SparseLDATrainGibbsSampler(object):
 
         self.smoothing_only_sum -= self.smoothing_only_bucket[word.topic]
         self.doc_topic_sum -= self.doc_topic_bucket[word.topic]
-        document.decrease_topic(word.topic, 1)
+        updated_topic_count = document.decrease_topic(word.topic, 1)
 
         self.smoothing_only_bucket[word.topic] = \
                 self.model.hyper_params.topic_prior * \
                 self.model.hyper_params.word_prior / \
-                (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist[word.topic])
+                (self.word_prior_sum + self.model.global_topic_hist[word.topic])
         self.smoothing_only_sum += self.smoothing_only_bucket[word.topic]
 
         self.doc_topic_bucket[word.topic] = \
-                document.get_topic_count(word.topic) * \
-                self.model.hyper_params.word_prior / \
-                (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist[word.topic])
+                updated_topic_count * self.model.hyper_params.word_prior / \
+                (self.word_prior_sum + self.model.global_topic_hist[word.topic])
         self.doc_topic_sum += self.doc_topic_bucket[word.topic]
 
         self.topic_word_coef[word.topic] = \
-                (self.model.hyper_params.topic_prior + \
-                document.get_topic_count(word.topic)) / \
-                (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist[word.topic])
+                (self.model.hyper_params.topic_prior + updated_topic_count) / \
+                (self.word_prior_sum + self.model.global_topic_hist[word.topic])
 
     def _add_word_topic(self, document, word):
         self.model.global_topic_hist[word.topic] += 1
@@ -315,27 +310,22 @@ class SparseLDATrainGibbsSampler(object):
 
         self.smoothing_only_sum -= self.smoothing_only_bucket[word.topic]
         self.doc_topic_sum -= self.doc_topic_bucket[word.topic]
-        document.increase_topic(word.topic, 1)
+        updated_topic_count = document.increase_topic(word.topic, 1)
 
         self.smoothing_only_bucket[word.topic] = \
                 self.model.hyper_params.topic_prior * \
                 self.model.hyper_params.word_prior / \
-                (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist[word.topic])
+                (self.word_prior_sum + self.model.global_topic_hist[word.topic])
         self.smoothing_only_sum += self.smoothing_only_bucket[word.topic]
 
         self.doc_topic_bucket[word.topic] = \
-                document.get_topic_count(word.topic) * \
-                self.model.hyper_params.word_prior / \
-                (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist[word.topic])
+                updated_topic_count * self.model.hyper_params.word_prior / \
+                (self.word_prior_sum + self.model.global_topic_hist[word.topic])
         self.doc_topic_sum += self.doc_topic_bucket[word.topic]
 
         self.topic_word_coef[word.topic] = \
-                (self.model.hyper_params.topic_prior + \
-                document.get_topic_count(word.topic)) / \
-                (self.model.hyper_params.word_prior * self.vocabulary.size() + \
-                self.model.global_topic_hist[word.topic])
+                (self.model.hyper_params.topic_prior + updated_topic_count) / \
+                (self.word_prior_sum + self.model.global_topic_hist[word.topic])
 
     def _sample_new_topic(self, document, word, rand):
         """Sampling a new topic for current word.

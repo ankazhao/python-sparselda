@@ -74,10 +74,14 @@ class Document(object):
         return self.doc_topic_hist.count(topic)
 
     def increase_topic(self, topic, count = 1):
-        self.doc_topic_hist.increase_topic(topic, count)
+        """Adds count to current topic, and returns the updated count.
+        """
+        return self.doc_topic_hist.increase_topic(topic, count)
 
     def decrease_topic(self, topic, count = 1):
-        self.doc_topic_hist.decrease_topic(topic, count)
+        """Subtracts count from current topic, and returns the updated count.
+        """
+        return self.doc_topic_hist.decrease_topic(topic, count)
 
     def __str__(self):
         """Outputs a human-readable representation of the model.

@@ -55,7 +55,7 @@ class TopicWordsStat(object):
             sparse_topic_word_dist.append([])
 
         for word_id, ordered_sparse_topic_hist in \
-                self.model.word_topic_hist.items():
+                self.model.word_topic_hist.iteritems():
             for non_zero in ordered_sparse_topic_hist.non_zeros:
                 sparse_topic_word_dist[non_zero.topic].append( \
                         [word_id, \

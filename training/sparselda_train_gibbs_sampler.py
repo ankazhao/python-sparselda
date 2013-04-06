@@ -87,8 +87,6 @@ class SparseLDATrainGibbsSampler(object):
         Line format: token1 \t token2 \t token3 \t ... ...
         """
         self.documents = []
-        self.model.global_topic_hist = [0] * self.model.num_topics
-        self.model.word_topic_hist = {}
         rand = random.Random()
 
         logging.info('Load corpus from %s.' % corpus_dir)
@@ -103,24 +101,38 @@ class SparseLDATrainGibbsSampler(object):
                     if len(doc_tokens) < 2:
                         continue
                     document = Document(self.model.num_topics)
-                    document.parse_from_tokens(doc_tokens, rand, \
-                            self.vocabulary)
+                    document.parse_from_tokens(doc_tokens, rand, self.vocabulary)
                     if document.num_words() < 2:
                         continue
                     self.documents.append(document)
-                    for word in document.words:
-                        if word.id not in self.model.word_topic_hist:
-                            self.model.word_topic_hist[word.id] = \
-                                    OrderedSparseTopicHistogram( \
-                                    self.model.num_topics)
-                        self.model.word_topic_hist[word.id].increase_topic( \
-                                  word.topic, 1)
-                        self.model.global_topic_hist[word.topic] += 1
                 fp.close()
 
         logging.info('The document number is %d.' % len(self.documents))
+        self._initialize_model()
+
         self._calculate_smoothing_only_bucket()
         self._initialize_topic_word_coefficient()
+
+    def _initialize_model(self):
+        self.model.global_topic_hist = [0] * self.model.num_topics
+        self.model.word_topic_hist = {}
+        word_topic_stat = {}
+
+        for document in self.documents:
+            for word in document.words:
+                if word.id not in word_topic_stat:
+                    word_topic_stat[word.id] = {}
+                if word.topic not in word_topic_stat[word.id]:
+                    word_topic_stat[word.id][word.topic] = 1
+                else:
+                    word_topic_stat[word.id][word.topic] += 1
+                self.model.global_topic_hist[word.topic] += 1
+
+        for word_id, topic_stat in word_topic_stat.iteritems():
+            self.model.word_topic_hist[word_id] = \
+                    OrderedSparseTopicHistogram(self.model.num_topics)
+            for topic, count in topic_stat.iteritems():
+                self.model.word_topic_hist[word_id].increase_topic(topic, count)
 
     def save_model(self, model_dir, iteration = ''):
         """Save lda model to model_dir.

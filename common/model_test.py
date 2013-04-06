@@ -35,7 +35,7 @@ class ModelTest(unittest.TestCase):
         self.assertEqual(len(new_model.word_topic_hist), \
                 len(self.model.word_topic_hist))
 
-        for word, new_sparse_topic_hist in new_model.word_topic_hist.items():
+        for word, new_sparse_topic_hist in new_model.word_topic_hist.iteritems():
             self.assertTrue(word in self.model.word_topic_hist)
             sparse_topic_hist = self.model.word_topic_hist[word]
             self.assertEqual(new_sparse_topic_hist.size(), \

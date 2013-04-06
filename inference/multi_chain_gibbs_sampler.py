@@ -42,7 +42,7 @@ class MultiChainGibbsSampler(SparseLDAGibbsSampler):
         for i in range(0, self.num_markov_chains):
             topic_dist = self._inference_one_chain(doc_tokens, rand)
 
-            for topic, prob in topic_dist.items():
+            for topic, prob in topic_dist.iteritems():
                 if topic in accumulated_topic_dist:
                     accumulated_topic_dist[topic] += prob
                 else:

@@ -105,8 +105,7 @@ class Model(object):
     def _save_word_topic_hist(self, filename):
         fp = open(filename, 'wb')
         record_writer = RecordWriter(fp)
-        for word, ordered_sparse_topic_hist in \
-                self.word_topic_hist.items():
+        for word, ordered_sparse_topic_hist in self.word_topic_hist.iteritems():
             word_topic_hist_pb = WordTopicHistogramPB()
             word_topic_hist_pb.word = word
             word_topic_hist_pb.sparse_topic_hist.ParseFromString( \
@@ -184,7 +183,7 @@ class Model(object):
         word_prior_sum = self.hyper_params.word_prior * vocab_size
 
         # TODO(fandywang): only cache sub-matrix p(w|z) of frequency words.
-        for word_id, ordered_sparse_topic_hist in self.word_topic_hist.items():
+        for word_id, ordered_sparse_topic_hist in self.word_topic_hist.iteritems():
             dense_topic_dist = []
             for topic in xrange(self.num_topics):
                 dense_topic_dist.append(self.hyper_params.word_prior / \
@@ -205,7 +204,7 @@ class Model(object):
         model_str.append('NumTopics: %d' % self.num_topics)
         model_str.append('GlobalTopicHist: %s' % str(self.global_topic_hist))
         model_str.append('WordTopicHist: ')
-        for word, ordered_sparse_topic_hist in self.word_topic_hist.items():
+        for word, ordered_sparse_topic_hist in self.word_topic_hist.iteritems():
             model_str.append('word: %d' % word)
             model_str.append('topic_hist: %s' % str(ordered_sparse_topic_hist))
         model_str.append('HyperParams: ')

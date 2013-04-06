@@ -173,11 +173,11 @@ class SparseLDAGibbsSampler(object):
         """
         topic_dist = {}
         weight_sum = 0
-        for topic, weight in topic_dict.items():
+        for topic, weight in topic_dict.iteritems():
             weight_sum += weight
         if weight_sum == 0:
             logging.warning('The sum of topic weight is zero.')
             return topic_dist
-        for topic, weight in topic_dict.items():
+        for topic, weight in topic_dict.iteritems():
             topic_dist[topic] = float(weight) / weight_sum
         return topic_dist

@@ -3,6 +3,18 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import logging
 import os
@@ -57,8 +69,8 @@ class SparseLDATrainGibbsSampler(object):
     """
 
     def __init__(self, model, vocabulary):
-        logging.basicConfig(filename = os.path.join(os.getcwd(), \
-                'log.txt'), level = logging.DEBUG, filemode = 'a', \
+        logging.basicConfig(filename = os.path.join(os.getcwd(),
+                'log.txt'), level = logging.DEBUG, filemode = 'a',
                 format = '%(asctime)s - %(levelname)s: %(message)s')
 
         self.model = model
@@ -179,7 +191,7 @@ class SparseLDATrainGibbsSampler(object):
             if iteration > max_iteration:
                 max_iteration = iteration
         if max_iteration == -1:
-            logging.warning('The checkpoint directory %s does not exists.' \
+            logging.warning('The checkpoint directory %s does not exists.'
                     % checkpoint_dir)
             return None
         checkpoint_dir += '/' + str(max_iteration)
@@ -192,7 +204,7 @@ class SparseLDATrainGibbsSampler(object):
     def _load_corpus(self, corpus_dir):
         self.documents = []
         if not os.path.exists(corpus_dir):
-            logging.error('The corpus directory %s does not exists.' \
+            logging.error('The corpus directory %s does not exists.'
                     % corpus_dir)
             return False
 
@@ -213,7 +225,7 @@ class SparseLDATrainGibbsSampler(object):
 
     def _load_model(self, model_dir):
         if not os.path.exists(model_dir):
-            logging.error('The lda model directory %s does not exists.' \
+            logging.error('The lda model directory %s does not exists.'
                     % model_dir)
             return False
         self.model.load(model_dir)
@@ -252,7 +264,7 @@ class SparseLDATrainGibbsSampler(object):
         for non_zero in document.doc_topic_hist.non_zeros:
             self.doc_topic_bucket[non_zero.topic] = \
                     non_zero.count * self.model.hyper_params.word_prior / \
-                    (self.word_prior_sum + \
+                    (self.word_prior_sum +
                     self.model.global_topic_hist[non_zero.topic])
             self.doc_topic_sum += self.doc_topic_bucket[non_zero.topic]
 
@@ -270,7 +282,7 @@ class SparseLDATrainGibbsSampler(object):
         for non_zero in document.doc_topic_hist.non_zeros:
             self.topic_word_coef[non_zero.topic] = \
                     (self.model.hyper_params.topic_prior + non_zero.count) / \
-                    (self.word_prior_sum + \
+                    (self.word_prior_sum +
                     self.model.global_topic_hist[non_zero.topic])
 
     def _reset_topic_word_coefficient(self, document):
@@ -279,7 +291,7 @@ class SparseLDATrainGibbsSampler(object):
         for non_zero in document.doc_topic_hist.non_zeros:
             self.topic_word_coef[non_zero.topic] = \
                     self.model.hyper_params.topic_prior / \
-                    (self.word_prior_sum + \
+                    (self.word_prior_sum +
                     self.model.global_topic_hist[non_zero.topic])
 
     def _calculate_topic_word_bucket(self, word):

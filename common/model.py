@@ -3,14 +3,26 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import logging
 import os
 
-from lda_pb2 import SparseTopicHistogramPB
 from lda_pb2 import GlobalTopicHistogramPB
-from lda_pb2 import WordTopicHistogramPB
 from lda_pb2 import HyperParamsPB
+from lda_pb2 import WordTopicHistogramPB
+from lda_pb2 import SparseTopicHistogramPB
 from ordered_sparse_topic_histogram import OrderedSparseTopicHistogram
 from recordio import RecordReader
 from recordio import RecordWriter
@@ -47,6 +59,7 @@ class HyperParams(object):
         return '<topic_prior: ' + str(self.topic_prior) + \
                 ', word_prior: ' + str(self.word_prior) + '>'
 
+
 class Model(object):
     """Model implements the sparselda model.
     It includes the following parts:
@@ -76,21 +89,21 @@ class Model(object):
         if not os.path.exists(model_dir):
             os.mkdir(model_dir)
 
-        self._save_word_topic_hist(model_dir + "/" + \
+        self._save_word_topic_hist(model_dir + "/" +
                 self.__class__.WORD_TOPIC_HIST_FILENAME)
-        self._save_global_topic_hist(model_dir + "/" + \
+        self._save_global_topic_hist(model_dir + "/" +
                  self.__class__.GLOABLE_TOPIC_HIST_FILENAME)
-        self._save_hyper_params(model_dir + "/" + \
+        self._save_hyper_params(model_dir + "/" +
                  self.__class__.HYPER_PARAMS_FILENAME)
 
     def load(self, model_dir):
         logging.info('Load lda model from %s.' % model_dir)
-        assert self._load_global_topic_hist(model_dir + "/" + \
+        assert self._load_global_topic_hist(model_dir + "/" +
                 self.__class__.GLOABLE_TOPIC_HIST_FILENAME)
         self.num_topics = len(self.global_topic_hist)
-        assert self._load_word_topic_hist(model_dir + "/" + \
+        assert self._load_word_topic_hist(model_dir + "/" +
                 self.__class__.WORD_TOPIC_HIST_FILENAME)
-        assert self._load_hyper_params(model_dir + "/" + \
+        assert self._load_hyper_params(model_dir + "/" +
                 self.__class__.HYPER_PARAMS_FILENAME)
 
     def _save_global_topic_hist(self, filename):
@@ -108,7 +121,7 @@ class Model(object):
         for word, ordered_sparse_topic_hist in self.word_topic_hist.iteritems():
             word_topic_hist_pb = WordTopicHistogramPB()
             word_topic_hist_pb.word = word
-            word_topic_hist_pb.sparse_topic_hist.ParseFromString( \
+            word_topic_hist_pb.sparse_topic_hist.ParseFromString(
                     ordered_sparse_topic_hist.serialize_to_string())
             record_writer.write(word_topic_hist_pb.SerializeToString())
         fp.close()
@@ -153,7 +166,7 @@ class Model(object):
 
             ordered_sparse_topic_hist = \
                     OrderedSparseTopicHistogram(self.num_topics)
-            ordered_sparse_topic_hist.parse_from_string( \
+            ordered_sparse_topic_hist.parse_from_string(
                     word_topic_hist_pb.sparse_topic_hist.SerializeToString())
             self.word_topic_hist[word_topic_hist_pb.word] = \
                     ordered_sparse_topic_hist
@@ -186,7 +199,7 @@ class Model(object):
         for word_id, ordered_sparse_topic_hist in self.word_topic_hist.iteritems():
             dense_topic_dist = []
             for topic in xrange(self.num_topics):
-                dense_topic_dist.append(self.hyper_params.word_prior / \
+                dense_topic_dist.append(self.hyper_params.word_prior /
                         (word_prior_sum + self.global_topic_hist[topic]))
 
             for non_zero in ordered_sparse_topic_hist.non_zeros:

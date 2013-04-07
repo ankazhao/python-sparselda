@@ -3,6 +3,18 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import unittest
 import sys
@@ -29,19 +41,19 @@ class MultiChainGibbsSamplerTest(unittest.TestCase):
 
         doc_tokens = ['apple', 'ipad']
         doc_topic_dist = self.multi_chain_gibbs_sampler.infer_topics(doc_tokens)
-        # print doc_topic_dist
-        self.assertEqual(3, len(doc_topic_dist))
+        print doc_topic_dist
+        self.assertEqual(5, len(doc_topic_dist))
         self.assertTrue(0 in doc_topic_dist)
-        self.assertEqual(0.6799999999999999, doc_topic_dist[0])
+        self.assertEqual(0.05, doc_topic_dist[0])
         self.assertTrue(1 in doc_topic_dist)
-        self.assertEqual(0.24, doc_topic_dist[1])
+        self.assertEqual(0.32, doc_topic_dist[1])
         self.assertTrue(3 in doc_topic_dist)
-        self.assertEqual(0.08, doc_topic_dist[3])
+        self.assertEqual(0.14, doc_topic_dist[3])
 
         doc_tokens = ['apple', 'ipad', 'apple', 'null', 'nokia', 'macbook']
         doc_topic_dist = self.multi_chain_gibbs_sampler.infer_topics(doc_tokens)
-        # print doc_topic_dist
-        self.assertEqual(8, len(doc_topic_dist))
+        print doc_topic_dist
+        self.assertEqual(6, len(doc_topic_dist))
 
 if __name__ == '__main__':
     unittest.main()

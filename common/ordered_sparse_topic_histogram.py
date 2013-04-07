@@ -3,6 +3,18 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from lda_pb2 import SparseTopicHistogramPB
 
@@ -14,6 +26,7 @@ class NonZero(object):
 
     def __str__(self):
         return '<toipc: ' + str(self.topic) + ', count:' + str(self.count) + '>'
+
 
 class OrderedSparseTopicHistogram(object):
     """OrderedSparseTopicHistogram implements the class of sparse topic
@@ -98,10 +111,10 @@ class OrderedSparseTopicHistogram(object):
 
         # ensure that topics sorted by their counts.
         non_zero = self.non_zeros[index]
-        while index < len(self.non_zeros) - 1 and \
-                non_zero.count < self.non_zeros[index + 1].count:
-                    self.non_zeros[index] = self.non_zeros[index + 1]
-                    index += 1
+        while (index < len(self.non_zeros) - 1 and
+                non_zero.count < self.non_zeros[index + 1].count):
+            self.non_zeros[index] = self.non_zeros[index + 1]
+            index += 1
         if non_zero.count == 0:
             del self.non_zeros[index:]
         else:

@@ -3,6 +3,18 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import logging
 import math
@@ -44,9 +56,9 @@ class ModelEvaluator(object):
             doc_dense_topic_dist = self._compute_doc_topic_distribution(document)
             doc_loglikelihood = 0.0
             for word in document.words:
-                if word.id not in self.model.word_topic_hist:
+                word_topic_dist = self.word_topic_dist.get(word.id)
+                if word_topic_dist is None:
                     continue
-                word_topic_dist = self.word_topic_dist[word.id]
                 for topic, prob in enumerate(word_topic_dist):
                     doc_loglikelihood += \
                             math.log(prob * doc_dense_topic_dist[topic])
@@ -65,7 +77,8 @@ class ModelEvaluator(object):
                 self.model.hyper_params.topic_prior * self.model.num_topics + \
                 topic_hist_sum
         for i in xrange(self.model.num_topics):
-            dense_topic_dist.append( \
-                    (self.model.hyper_params.topic_prior + dense_topic_hist[i]) \
+            dense_topic_dist.append(
+                    (self.model.hyper_params.topic_prior + dense_topic_hist[i])
                     / denominator)
         return dense_topic_dist
+

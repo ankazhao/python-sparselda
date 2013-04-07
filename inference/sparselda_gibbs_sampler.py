@@ -3,6 +3,18 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import logging
 import random
@@ -35,7 +47,7 @@ class SparseLDAGibbsSampler(object):
     more details.
     """
 
-    def __init__(self, model, vocabulary, total_iterations, \
+    def __init__(self, model, vocabulary, total_iterations,
             burn_in_iterations):
         self.model = model
         self.vocabulary = vocabulary
@@ -71,7 +83,7 @@ class SparseLDAGibbsSampler(object):
         rand.seed(hash(str(doc_tokens)))
 
         doc_topic_dist = self._inference_one_chain(doc_tokens, rand)
-        sorted(doc_topic_dist.items(), lambda x, y: cmp(x[1], y[1]), \
+        sorted(doc_topic_dist.items(), lambda x, y: cmp(x[1], y[1]),
                 reverse = True)
         return doc_topic_dist
 
@@ -97,7 +109,7 @@ class SparseLDAGibbsSampler(object):
         Returns the sparse topics p(z|d).
         """
         document = Document(self.model.num_topics)
-        document.parse_from_tokens(doc_tokens, rand, \
+        document.parse_from_tokens(doc_tokens, rand,
                 self.vocabulary, self.model)
         if document.num_words() == 0:
             return dict()
@@ -149,7 +161,7 @@ class SparseLDAGibbsSampler(object):
                 sample -= prob
                 if sample <= 0:
                     return topic
-        logging.error('sample word topic error, sample: %f, dist_sum: %f.' \
+        logging.error('sample word topic error, sample: %f, dist_sum: %f.'
                 % (sample, dist_sum))
         return None
 
@@ -163,7 +175,7 @@ class SparseLDAGibbsSampler(object):
 
         dense_topic_dist = self.word_topic_dist[word]
         for non_zero in doc.doc_topic_hist.non_zeros:
-            doc_topic_bucket.append([non_zero.topic, \
+            doc_topic_bucket.append([non_zero.topic,
                     non_zero.count * dense_topic_dist[non_zero.topic]])
             doc_topic_sum += doc_topic_bucket[-1][1]
         return doc_topic_bucket, doc_topic_sum
@@ -181,3 +193,4 @@ class SparseLDAGibbsSampler(object):
         for topic, weight in topic_dict.iteritems():
             topic_dist[topic] = float(weight) / weight_sum
         return topic_dist
+

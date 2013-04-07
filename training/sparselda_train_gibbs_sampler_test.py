@@ -3,6 +3,18 @@
 
 # Copyright(c) 2013 python-sparselda project.
 # Author: Lifeng Wang (ofandywang@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import random
 import unittest
@@ -32,19 +44,19 @@ class SparseLDATrainGibbsSamplerTest(unittest.TestCase):
         for i in xrange(100):
             self.sparselda_train_gibbs_sampler.gibbs_sampling(rand)
             if (i + 1) % 10 == 0:
-                self.sparselda_train_gibbs_sampler.save_checkpoint( \
+                self.sparselda_train_gibbs_sampler.save_checkpoint(
                         '../testdata/checkpoint', i + 1)
-        self.sparselda_train_gibbs_sampler.save_model( \
+        self.sparselda_train_gibbs_sampler.save_model(
                 '../testdata/train_model', 100)
 
     def test_load_checkpoint(self):
-        cur_iteration = self.sparselda_train_gibbs_sampler.load_checkpoint( \
+        cur_iteration = self.sparselda_train_gibbs_sampler.load_checkpoint(
                 '../testdata/checkpoint')
         rand = random.Random()
         for i in xrange(cur_iteration, 200):
             self.sparselda_train_gibbs_sampler.gibbs_sampling(rand)
             if (i + 1) % 10 == 0:
-                self.sparselda_train_gibbs_sampler.save_checkpoint( \
+                self.sparselda_train_gibbs_sampler.save_checkpoint(
                         '../testdata/checkpoint', i + 1)
 
 if __name__ == '__main__':

@@ -201,11 +201,10 @@ class Model(object):
             for topic in xrange(self.num_topics):
                 dense_topic_dist.append(self.hyper_params.word_prior /
                         (word_prior_sum + self.global_topic_hist[topic]))
-
             for non_zero in ordered_sparse_topic_hist.non_zeros:
                 dense_topic_dist[non_zero.topic] = \
                         (self.hyper_params.word_prior + non_zero.count) / \
-                        (word_prior_sum + self.global_topic_hist[topic])
+                        (word_prior_sum + self.global_topic_hist[non_zero.topic])
             word_topic_dist[word_id] = dense_topic_dist
 
         return word_topic_dist

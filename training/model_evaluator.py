@@ -53,15 +53,17 @@ class ModelEvaluator(object):
         """
         loglikelihood = 0.0
         for document in documents:
-            doc_dense_topic_dist = self._compute_doc_topic_distribution(document)
+            doc_dense_topic_dist = \
+                    self._compute_doc_topic_distribution(document)
             doc_loglikelihood = 0.0
             for word in document.words:
                 word_topic_dist = self.word_topic_dist.get(word.id)
                 if word_topic_dist is None:
                     continue
+                word_prob_sum = 0.0
                 for topic, prob in enumerate(word_topic_dist):
-                    doc_loglikelihood += \
-                            math.log(prob * doc_dense_topic_dist[topic])
+                    word_prob_sum += prob * doc_dense_topic_dist[topic]
+                doc_loglikelihood += math.log(word_prob_sum)
             loglikelihood += doc_loglikelihood
         return loglikelihood
 

@@ -122,7 +122,7 @@ class SparseLDATrainGibbsSampler(object):
         logging.info('The document number is %d.' % len(self.documents))
         self._initialize_model()
 
-        self._calculate_smoothing_only_bucket()
+        self._compute_smoothing_only_bucket()
         self._initialize_topic_word_coefficient()
 
     def _initialize_model(self):
@@ -235,17 +235,17 @@ class SparseLDATrainGibbsSampler(object):
         """Perform one iteration of Gibbs Sampling.
         """
         for document in self.documents:
-            self._calculate_doc_topic_bucket(document)
+            self._compute_doc_topic_bucket(document)
             self._update_topic_word_coefficient(document)
             for word in document.words:
                 self._remove_word_topic(document, word)
-                self._calculate_topic_word_bucket(word)
+                self._compute_topic_word_bucket(word)
                 new_topic = self._sample_new_topic(document, word, rand)
                 word.topic = new_topic
                 self._add_word_topic(document, word)
             self._reset_topic_word_coefficient(document)
 
-    def _calculate_smoothing_only_bucket(self):
+    def _compute_smoothing_only_bucket(self):
         """s(z) = alpha(z) * beta / (beta * |V| + N(z))
         """
         self.smoothing_only_sum = 0.0
@@ -256,7 +256,7 @@ class SparseLDATrainGibbsSampler(object):
                     (self.word_prior_sum + self.model.global_topic_hist[topic])
             self.smoothing_only_sum += self.smoothing_only_bucket[topic]
 
-    def _calculate_doc_topic_bucket(self, document):
+    def _compute_doc_topic_bucket(self, document):
         """r(z, d) = N(z|d) * beta / (beta * |V| + N(z))
         """
         self.doc_topic_sum = 0.0
@@ -294,7 +294,7 @@ class SparseLDATrainGibbsSampler(object):
                     (self.word_prior_sum +
                     self.model.global_topic_hist[non_zero.topic])
 
-    def _calculate_topic_word_bucket(self, word):
+    def _compute_topic_word_bucket(self, word):
         """q(z, w, d) = N(w|z) * (alpha(z) + N(z|d)) / (beta * |V| + N(z))
                       = N(w|z) * q_coefficient(z, d)
         """

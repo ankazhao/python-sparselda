@@ -30,10 +30,11 @@ class ModelEvaluatorTest(unittest.TestCase):
                 'nokia', 'null']  # inexistent
         document = Document(self.model.num_topics)
         rand = random.Random()
+        rand.seed(0)
         document.parse_from_tokens(
                 doc_tokens, rand, self.vocabulary, self.model)
         documents = [document, document]
-        self.assertEqual(-416.2960406633179,
+        self.assertEqual(-14.113955684239654,
                 self.model_evaluator.compute_loglikelihood(documents))
 
 if __name__ == '__main__':
